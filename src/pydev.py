@@ -14,7 +14,6 @@ from pathlib import Path
 
 logger = logging.getLogger()
 
-
 # NOTE Script will chgdir to the project root at startup in main() !
 
 def get_project_root():
@@ -73,7 +72,7 @@ def init():
 
 @main.command
 def info():
-    """ Project Information """
+    """ Project information """
     name = get_config("project.name")
     version = get_config("project.version")
     print("name", name)
@@ -119,10 +118,10 @@ def dump():
 
 
 @main.command('publish')
-@click.option('-t', '--test-only')
-def publish(test_only=False):
+@click.option('-t', '--test-pypi')
+def publish(test_pypi=False):
     """ Publish project with twine """
-    if test_only:
+    if test_pypi:
         print("twine upload --repository testpypi dist/*")
     else:
         print("twine upload dist/*")
