@@ -58,6 +58,6 @@ pip install git+https://github.com/furechan/pydev-proto.git
 
 - [Packaging tools comparisons](https://sinoroc.gitlab.io/kb/python/packaging_tools_comparisons.html)
 - [Python task runners](https://sinoroc.gitlab.io/kb/python/task_runners.html)
-- [click](https://click.palletsprojects.com/)
-- [invoke](https://www.pyinvoke.org/)
-- [build](https://github.com/pypa/build)
+- [click](https://click.palletsprojects.com/) Python composable command line interface toolkit
+- [invoke](https://www.pyinvoke.org/) Pythonic task management & command execution
+- [build](https://github.com/pypa/build) A simple, correct Python build frontend
