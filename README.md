@@ -8,7 +8,7 @@ related tasks in sequence from the command line.
 pydev init build dump
 ```
 
-This project though exploratory may be usefull as a template for a custom workflow
+This project is exploratory and may be usefull as a template for a custom workflow
 if you are not ready to commit to more involved tool chains
 like `poetry`, `pdm`, `hatch`, etc ...
 
@@ -51,13 +51,13 @@ Commands:
 
 > **Warning**
 This project installs a script called `pydev`
-which name is also used by other projects like
+with the same name as other projects like
 [pydev](https://pypi.org/project/pydev/).
 
 You can install the latest version of this package with pip.
 
 ```console
-pip install git+https://github.com/furechan/pydev-proto.git
+pip install git+https://github.com/furechan/pydev-click.git
 ```
 
 ## Related projects and resources
