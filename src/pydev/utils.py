@@ -64,7 +64,7 @@ def system_python(version=None):
     if not version:
         version = "3"
 
-    path = os.getenv("PATH", "/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin)"
+    path = os.getenv("PATH", "/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin")
     path = path.split(os.pathsep)
 
     pattern = "python" + version

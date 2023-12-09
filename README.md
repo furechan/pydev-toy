@@ -1,6 +1,6 @@
 # Python cli prototype to manage simple projects 
 
-Basic command line to manage standard `pyproject.toml` based projects.
+Basic command line tool to manage standard `pyproject.toml` based projects.
 This is a prototype cli built with `click` that can run multiple project
 related tasks in sequence from the command line.
 
@@ -9,23 +9,20 @@ pydev init build dump
 ```
 
 This project is exploratory and may be usefull as a template for a custom workflow
-if you are not ready to commit to more involved tool chains
-like `poetry`, `pdm`, `hatch`, etc ...
+if you are not using integrated tool chains like `poetry`, `pdm`, `hatch`, etc ...
 
 The script can be installed in a global/system python environment and
-used in any projects even if not installed in the project venv.
-
-The script will only work with projects that contain a `pyproject.toml`.
+used in another project even if is is not installed in the project venv.
 
 The script uses standard python packaging tools like `build` and `twine` and
 is independent from the project build backend.
 
-Please note, that some commands like `build` and `publish`
-will run in the active python envirnment (project venv)
-and not necessarily the one where `pydev` was originally installed.
-Theses command have required dependencies like `build`, `twine`
+Please note, that most `pydev` commands 
+will run in the active python environment (project venv)
+and not necessarily the environment where `pydev` was originally installed.
+Theses commands have dependencies like `build`, `twine`
 that must be present in the active python environment (project venv).
-You can run `pyenv init` to install these dependencies in the venv.
+You can run `pydev init` to install these dependencies in the active environment.
 
 
 ## Usage

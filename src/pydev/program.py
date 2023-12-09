@@ -104,16 +104,13 @@ def publish(test_pypi=False):
 
 
 @main.command('python')
-@click.argument('version', default='3')
+@click.argument('version', default='')
 @click.option('--system', 'target', flag_value='system', default=True)
 @click.option('--pyenv', 'target', flag_value='pyenv')
 @click.option('--conda', 'target', flag_value='conda')
-# @click.option('--pyenv', is_flag=True, help="Use pyenv versions")
-# @click.option('--conda', is_flag=True, help="Use conda envs")
 def python(version, target):
-    """ Locate python executable """
-    print("python", version, target)
+    """ Locate python by version and target (system/pyenv/conda) """
     if python := get_python(version, target):
         print(python)
     else:
-        print(f"Python {version} not found!")
+        print(f"Python {version} for {target} not found!")
