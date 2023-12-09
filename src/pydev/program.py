@@ -39,14 +39,14 @@ def main():
 
 
 @main.command
-def root():
-    """ Project root """
+def pwd():
+    """ Run pwd from project root """
     run_command("pwd")
 
 
 @main.command
 def init():
-    """ Inititalize Project env """
+    """ Inititalize project env """
     run_command("pip install build twine pytest where-toy")
 
 

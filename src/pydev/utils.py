@@ -1,8 +1,9 @@
 import os
-import toml
+import tomli
 
 from pathlib import Path
 
+from functools import lru_cache
 
 def get_project_root():
     """ Walk up to find project root """
@@ -19,17 +20,25 @@ def get_project_root():
             return path
 
 
-def get_config(item: str = None, default=None):
-    """ Parse pyproject.toml file """
+@lru_cache
+def load_config():
+    """ Load pyproject.toml file """
 
     pyproject = Path("pyproject.toml").resolve(strict=True)
-    data = toml.load(pyproject)
 
-    if item is not None:
-        for i in item.split("."):
-            data = data.get(i, None)
-            if data is None:
-                return default
+    with pyproject.open("rb") as f:
+        return tomll.load(f)
+
+
+def get_config(item: str, default=None):
+    """ Query pyproject.toml file """
+
+    data = load_config()
+
+    for i in item.split("."):
+        data = data.get(i, None)
+        if data is None:
+            return default
 
     return data
 

@@ -1,26 +1,32 @@
 # Python cli prototype to manage simple projects 
 
 Basic command line to manage standard `pyproject.toml` based projects.
-This is a prototype cli built with `click` that allows to specify
-multiple targets on the command line like:
+This is a prototype cli built with `click` that can run multiple project
+related tasks in sequence from the command line.
 
 ```console
 pydev init build dump
 ```
 
-This may be usefull as a template for a custom workflow
-if you are not ready to commit to specific tool chains
+This project though exploratory may be usefull as a template for a custom workflow
+if you are not ready to commit to more involved tool chains
 like `poetry`, `pdm`, `hatch`, etc ...
 
-The script can be installed in you python system environment and used in any projects.
-The script will look for the project root by walking up from the working directory
-until it finds a `pyproject.toml` file.
+The script can be installed in a global/system python environment and
+used in any projects even if not installed in the project venv.
 
-To install the required dependencies (`build`, `twine`) in a target python environment
-run `pydev init` before other commands. Please note the target environment must be the active environment.
+The script will only work with projects that contain a `pyproject.toml`.
 
 The script uses standard python packaging tools like `build` and `twine` and
 is independent from the project build backend.
+
+Please note, that some commands like `build` and `publish`
+will run in the active python envirnment (project venv)
+and not necessarily the one where `pydev` was originally installed.
+Theses command have required dependencies like `build`, `twine`
+that must be present in the active python environment (project venv).
+You can run `pyenv init` to install these dependencies in the venv.
+
 
 ## Usage
 
@@ -36,7 +42,7 @@ Commands:
   clean    Clean build and dist folders
   dump     Dump wheel and dist contents
   info     Project information
-  init     Inititalize current env
+  init     Inititalize active env
   publish  Publish project with twine
 ```
 
@@ -48,7 +54,7 @@ This project installs a script called `pydev`
 which name is also used by other projects like
 [pydev](https://pypi.org/project/pydev/).
 
-You can install the latest version of this module with pip
+You can install the latest version of this package with pip.
 
 ```console
 pip install git+https://github.com/furechan/pydev-proto.git
