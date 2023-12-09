@@ -13,7 +13,7 @@ dependencies = [
 
 [tool.hatch.build]
 sources = ["src"]
-include = ["src/*.py"]
+
 
 [project.scripts]
 pydev = "pydev:main"

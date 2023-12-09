@@ -69,6 +69,14 @@ def init():
     """ Inititalize Project env """
     run_command("pip install build twine pytest where-toy")
 
+@main.command
+def where():
+    """ Inititalize Project env """
+
+    run_command("pip install build twine pytest where-toy")
+
+
+
 
 @main.command
 def info():
