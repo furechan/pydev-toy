@@ -9,9 +9,9 @@ import logging
 from urllib import request
 from urllib.error import HTTPError
 
-from .utils import get_project_root, get_config
-
 from pathlib import Path
+
+from .utils import get_project_root, get_config, get_python
 
 logger = logging.getLogger()
 
@@ -39,12 +39,6 @@ def main():
 
 
 @main.command
-def pwd():
-    """ Run pwd from project root """
-    run_command("pwd")
-
-
-@main.command
 def init():
     """ Inititalize project env """
     run_command("pip install build twine pytest where-toy")
@@ -55,8 +49,10 @@ def info():
     """ Project information """
     name = get_config("project.name")
     version = get_config("project.version")
+    project_root = get_project_root()
     print("name", name)
     print("version", version)
+    print("location", project_root)
     url = f"https://pypi.org/pypi/{name}/json"
     try:
         res = request.urlopen(url)
@@ -105,3 +101,19 @@ def publish(test_pypi=False):
         print("twine upload --repository testpypi dist/*")
     else:
         print("twine upload dist/*")
+
+
+@main.command('python')
+@click.argument('version', default='3')
+@click.option('--system', 'target', flag_value='system', default=True)
+@click.option('--pyenv', 'target', flag_value='pyenv')
+@click.option('--conda', 'target', flag_value='conda')
+# @click.option('--pyenv', is_flag=True, help="Use pyenv versions")
+# @click.option('--conda', is_flag=True, help="Use conda envs")
+def python(version, target):
+    """ Locate python executable """
+    print("python", version, target)
+    if python := get_python(version, target):
+        print(python)
+    else:
+        print(f"Python {version} not found!")
