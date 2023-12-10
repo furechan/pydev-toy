@@ -1,6 +1,7 @@
 import os
 import sys
 import tomli
+import subprocess
 
 from pathlib import Path
 
@@ -20,19 +21,33 @@ def get_python():
 
 
 @lru_cache
-def get_project_root():
+def get_project_root(strict=False):
     """ Walk up to find pyproject.toml """
 
-    def check_project(folder):
-        return folder.joinpath("pyproject.toml").exists()
+    cwd = Path.cwd()
 
-    work_dir = Path.cwd()
-
-    if check_project(work_dir):
-        return work_dir
-    for path in work_dir.parents:
-        if check_project(path):
+    for path in cwd, *cwd.parents:
+        if path.joinpath("pyproject.toml").exists():
             return path
+
+    if strict:
+        raise FileNotFoundError("pyproject.toml")
+
+def run_command(command, echo=True, strict=False, chgdir=True):
+    if echo:
+        print(command)
+
+    cwd = None
+    if chgdir:
+        cwd = get_project_root()
+        if cwd is None:
+            print("pyproject.toml file not found!")
+            exit(1)
+
+    rc = subprocess.run(command, cwd=cwd, shell=True)
+
+    if strict and rc != 0:
+        raise RuntimeError("Command failed!")
 
 
 @lru_cache
@@ -152,3 +167,16 @@ def which_python(version=None, target=None):
 
     if target in ("system", None):
         return system_python(version)
+
+
+def confirm_choice(message, default: bool = None):
+    prompt = f"{message} (yes/no):"
+
+    while True:
+        user_input = input(prompt)
+        if user_input.lower() in ('y', 'yes'):
+            return True
+        if user_input.lower() in ('n', 'no'):
+            return False
+        if user_input == '' and default is not None:
+            return default

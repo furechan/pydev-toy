@@ -5,11 +5,11 @@ This is a prototype cli built with `click` that can run multiple project
 related tasks in sequence from the command line.
 
 ```console
-pydev init build dump
+pydev clean build dump
 ```
 
 This project is exploratory and may be usefull as a template for custom workflows
-when not commited to tool chains like `poetry`, `pdm`, `hatch`, etc ...
+when not commited yet to tool chains like `poetry`, `pdm`, `hatch`, etc ...
 
 The script can be installed in a system/base python environment and
 used in another project even if is is not installed in the project venv.
@@ -29,11 +29,13 @@ Options:
 
 Commands:
   build    Build project wheel
-  clean    Clean build and dist folders
+  clean    Delete build and dist folders
   dump     Dump wheel and dist contents
   info     Project information
-  init     Inititalize active env
   publish  Publish project with twine
+  pwd      Project information
+  reset    Delete all runtime folders
+  which    Locate python by version and target
 ```
 
 
