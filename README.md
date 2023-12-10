@@ -8,21 +8,14 @@ related tasks in sequence from the command line.
 pydev init build dump
 ```
 
-This project is exploratory and may be usefull as a template for a custom workflow
-if you are not using integrated tool chains like `poetry`, `pdm`, `hatch`, etc ...
+This project is exploratory and may be usefull as a template for custom workflows
+when not commited to tool chains like `poetry`, `pdm`, `hatch`, etc ...
 
-The script can be installed in a global/system python environment and
+The script can be installed in a system/base python environment and
 used in another project even if is is not installed in the project venv.
 
 The script uses standard python packaging tools like `build` and `twine` and
 is independent from the project build backend.
-
-Please note, that most `pydev` commands 
-will run in the active python environment (project venv)
-and not necessarily the environment where `pydev` was originally installed.
-Theses commands have dependencies like `build`, `twine`
-that must be present in the active python environment (project venv).
-You can run `pydev init` to install these dependencies in the active environment.
 
 
 ## Usage

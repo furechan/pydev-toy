@@ -1,4 +1,5 @@
 import os
+import sys
 import tomli
 
 from pathlib import Path
@@ -6,9 +7,21 @@ from pathlib import Path
 from functools import lru_cache
 
 
+def get_python():
+    """
+    Python executable path for sub commands
+
+    Return:
+        Python executable where the package is installed.
+        This could be changed to use the python from
+        the system path or a virtual env.
+    """
+    return sys.executable
+
+
 @lru_cache
 def get_project_root():
-    """ Walk up to find project root """
+    """ Walk up to find pyproject.toml """
 
     def check_project(folder):
         return folder.joinpath("pyproject.toml").exists()
@@ -61,6 +74,7 @@ def search_path(pattern: str, path=None):
 
 
 def system_python(version=None):
+    """ Python in the system path """
     if not version:
         version = "3"
 
@@ -83,7 +97,7 @@ def pyenv_versions():
 
 
 def pyenv_python(version: str = None) -> Path:
-    """ pyenv binary for target version """
+    """ pyenv binary for version prefix """
 
     if not version:
         version = "3.*"
@@ -114,7 +128,7 @@ def conda_envs():
 
 
 def conda_python(name: str = None) -> Path:
-    """ conda binary for target version """
+    """ conda binary for named env """
 
     conda_root = os.getenv("CONDA_PREFIX", "~/miniconda3")
     conda_root = Path(conda_root).expanduser()
@@ -128,7 +142,8 @@ def conda_python(name: str = None) -> Path:
         return conda_env.joinpath("bin/python")
 
 
-def get_python(version=None, target=None):
+def which_python(version=None, target=None):
+    """ Locate python matching version/target """
     if target == "pyenv":
         return pyenv_python(version)
 
