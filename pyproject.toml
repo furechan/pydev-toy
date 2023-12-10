@@ -6,10 +6,7 @@ build-backend = "hatchling.build"
 name = "pydev-click"
 version = "0.0.0"
 requires-python = ">=3.7"
-dependencies = [
-    "click",
-    "tomli",
-]
+dependencies = [ "click", "tomli", "build", "twine" ]
 
 [tool.hatch.build]
 sources = ["src"]

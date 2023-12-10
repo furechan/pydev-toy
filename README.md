@@ -32,9 +32,9 @@ Commands:
   clean    Delete build and dist folders
   dump     Dump wheel and dist contents
   info     Project information
+  prune    Delete all runtime folders
   publish  Publish project with twine
-  pwd      Project information
-  reset    Delete all runtime folders
+  pwd      Project root path
   which    Locate python by version and target
 ```
 

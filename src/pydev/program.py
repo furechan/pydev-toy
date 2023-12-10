@@ -17,6 +17,7 @@ from . import messages
 
 logger = logging.getLogger()
 
+PROJECT_URL = "git+ssh://git@github.com/furechan/pydev-click.git"
 
 
 @click.group(chain=True)
@@ -28,6 +29,7 @@ def main():
 def pwd():
     """ Project root path """
     utils.run_command("pwd", echo=False)
+
 
 @main.command
 def info():
@@ -119,10 +121,18 @@ def publish(test_pypi=False):
 
 
 @main.command
+def update():
+    """ Update pyenv by reinstalling it """
+    python = utils.get_python()
+    command = f"{python} -mpip install -U {PROJECT_URL}"
+    utils.run_command(command, chgdir=False)
+
+
+@main.command
 @click.argument('version', default='')
-@click.option('--system', 'target', flag_value='system', default=True)
-@click.option('--pyenv', 'target', flag_value='pyenv')
-@click.option('--conda', 'target', flag_value='conda')
+@click.option('--system', 'target', flag_value='system', default=True, help="Use system python")
+@click.option('--pyenv', 'target', flag_value='pyenv', help="Use pyenv version")
+@click.option('--conda', 'target', flag_value='conda', help="Use conda env")
 def which(version, target):
     """ Locate python by version and target """
     if python := utils.which_python(version, target):
