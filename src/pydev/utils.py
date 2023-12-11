@@ -1,3 +1,5 @@
+""" pydev utils """
+
 import os
 import sys
 import tomli

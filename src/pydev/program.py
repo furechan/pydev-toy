@@ -1,23 +1,19 @@
-import os
-import sys
+""" pydev program """
 
 import json
 import click
 import shutil
 import logging
-import subprocess
 
 from urllib import request
 from urllib.error import HTTPError
-
-from pathlib import Path
 
 from . import utils
 from . import messages
 
 logger = logging.getLogger()
 
-PROJECT_URL = "git+ssh://git@github.com/furechan/pydev-click.git"
+PROJECT_URL = "git+ssh://git@github.com/furechan/pydev-proto.git"
 
 
 @click.group(chain=True)
