@@ -12,7 +12,7 @@ This project is exploratory and may be usefull as a template for custom workflow
 when not commited yet to tool chains like `poetry`, `pdm`, `hatch`, etc ...
 
 The script can be installed in a system/base python environment and
-used in another project even if is is not installed in the project venv.
+used in another project even if it is not installed in the project venv.
 
 The script uses standard python packaging tools like `build` and `twine` and
 is independent from the project build backend.
