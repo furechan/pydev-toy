@@ -20,7 +20,6 @@ is independent from the project build backend.
 
 ## Usage
 
-
 ```console
 Usage: pydev [OPTIONS] COMMAND1 [ARGS]... [COMMAND2 [ARGS]...]...
 
@@ -49,7 +48,7 @@ with the same name as other projects like
 You can install the latest version of this package with pip.
 
 ```console
-pip install git+https://github.com/furechan/pydev-click.git
+pip install git+ssh://git@github.com/furechan/pydev-proto.git
 ```
 
 ## Related Projects & Resources
