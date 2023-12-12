@@ -7,10 +7,10 @@ name = "pydev-proto"
 version = "0.0.0"
 requires-python = ">=3.7"
 dependencies = [ "click", "tomli", "build", "twine" ]
+optional-dependencies.dev = [ "ipykernel" ]
 
 [tool.hatch.build]
-sources = ["src"]
-include = ["src/pydev"]
+packages = ["src/pydev"]
 
 [project.scripts]
 pydev = "pydev:main"
