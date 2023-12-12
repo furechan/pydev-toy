@@ -10,6 +10,7 @@ dependencies = [ "click", "tomli", "build", "twine" ]
 
 [tool.hatch.build]
 sources = ["src"]
+include = ["src/pydev"]
 
 [project.scripts]
 pydev = "pydev:main"
