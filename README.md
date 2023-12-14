@@ -48,7 +48,7 @@ with the same name as other projects like
 You can install the latest version of this package with pip.
 
 ```console
-pip install git+ssh://git@github.com/furechan/pydev-proto.git
+pipx install git+ssh://git@github.com/furechan/pydev-proto.git
 ```
 
 ## Related Projects & Resources
