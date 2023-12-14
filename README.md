@@ -45,10 +45,10 @@ This project installs a script called `pydev`
 with the same name as other projects like
 [pydev](https://pypi.org/project/pydev/).
 
-You can install the latest version of this package with pip.
+You can install the latest version of this package with pip/pipx.
 
 ```console
-pipx install git+ssh://git@github.com/furechan/pydev-proto.git
+pipx install git+ssh://git@github.com/furechan/pydev-tool.git
 ```
 
 ## Related Projects & Resources

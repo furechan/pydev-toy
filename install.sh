@@ -1,4 +1,5 @@
 #!/bin/zsh
+# Install local project with pipx
 
 set -eu
 
@@ -13,6 +14,3 @@ else
   echo pyproject.toml file not found!
   exit 1
 fi
-
-
-
