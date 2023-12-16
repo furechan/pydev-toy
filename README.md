@@ -9,13 +9,14 @@ pydev clean build dump
 ```
 
 This project is exploratory and may be usefull as a template for custom workflows
-when not commited yet to tool chains like `poetry`, `pdm`, `hatch`, etc ...
+when not commited to tool chains like `poetry`, `pdm`, `hatch`, etc ...
 
-The script can be installed in a system/base python environment and
-used in another project even if it is not installed in the project venv.
+The idea is to implement generic project tasks that can be run outside the project venv, 
+so that the script can be installed in a system/base python environment
+without cluttering the project venv.
 
-The script uses standard python packaging tools like `build` and `twine` and
-is independent from the project build backend.
+The script uses only standard python packaging tools like `build` and `twine` and
+is independent from any project build backends.
 
 
 ## Usage
@@ -42,7 +43,7 @@ Commands:
 
 > **Warning**
 This project installs a script called `pydev`
-with the same name as other projects like
+which is the same name as other projects like
 [pydev](https://pypi.org/project/pydev/).
 
 You can install the latest version of this package with pip/pipx.
