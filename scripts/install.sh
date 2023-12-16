@@ -1,11 +1,11 @@
 #!/bin/zsh
-# Install local project with pipx
+# Install package with pipx
 
 set -eu
 
-project=${0:a:h}
+project=${0:a:h:H}
 
-echo $project=$project
+echo project=$project
 
 if [ -f $project/pyproject.toml ]
 then

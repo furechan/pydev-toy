@@ -13,8 +13,6 @@ from . import messages
 
 logger = logging.getLogger()
 
-PROJECT_URL = "git+ssh://git@github.com/furechan/pydev-proto.git"
-
 
 @click.group(chain=True)
 def main():
@@ -113,15 +111,8 @@ def publish(test_pypi=False):
     else:
         command = f"{python} -mtwine upload dist/*"
 
-    print(command)
+    utils.run_command(command)
 
-
-@main.command
-def update():
-    """ Update pyenv by reinstalling it """
-    python = utils.get_python()
-    command = f"{python} -mpip install -U {PROJECT_URL}"
-    utils.run_command(command, chgdir=False)
 
 
 @main.command
