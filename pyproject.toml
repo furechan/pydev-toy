@@ -14,4 +14,3 @@ packages = ["src/pydev"]
 
 [project.scripts]
 pydev = "pydev:main"
-
