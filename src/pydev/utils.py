@@ -35,7 +35,10 @@ def get_project_root(strict=False):
     if strict:
         raise FileNotFoundError("pyproject.toml")
 
+
 def run_command(command, echo=True, strict=False, chgdir=True):
+    """ Run shell command """
+
     if echo:
         print(command)
 

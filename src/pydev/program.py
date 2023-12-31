@@ -21,7 +21,7 @@ def main():
 
 @main.command
 def pwd():
-    """ Project root path """
+    """ Run pwd """
     utils.run_command("pwd", echo=False)
 
 
@@ -47,11 +47,11 @@ def info():
 @main.command
 def clean():
     """ Delete build and dist folders """
-    root_project = utils.get_project_root(strict=True)
+    project_root = utils.get_project_root(strict=True)
     folders = 'build', 'dist'
 
     for folder in folders:
-        path = root_project.joinpath(folder)
+        path = project_root.joinpath(folder)
         if path.is_dir():
             print(f"rmtree {folder}")
             shutil.rmtree(path)
@@ -61,27 +61,33 @@ def clean():
 @click.option('-y', '--yes', is_flag=True)
 def prune(yes):
     """ Delete all runtime folders """
-    root_project = utils.get_project_root(strict=True)
+    project_root = utils.get_project_root(strict=True)
     folders = 'build', 'dist', ".venv", ".nox", ".tox"
-    confirm = yes or utils.confirm_choice(f"Do you want to delete runtime folders {folder}")
 
+    folders = [f for f in folders
+               if project_root.joinpath(f).exists()]
+
+    confirm = yes or utils.confirm_choice(f"Do you want to delete runtime folders {folders}")
     if not confirm:
         exit(1)
 
     for folder in folders:
-        path = root_project.joinpath(folder)
+        path = project_root.joinpath(folder)
         if path.is_dir():
             print(f"rmtree {folder}")
             shutil.rmtree(path)
 
 
 @main.command
-@click.pass_context
-def build(ctx):
+def build():
     """ Build project wheel """
-    # ctx.invoke(clean)
     python = utils.get_python()
-    utils.run_command(f"{python} -m build --wheel")
+    project_root = utils.get_project_root()
+    if project_root.joinpath("setup.py").exists():
+        target = "sdist"
+    else:
+        target = "wheel"
+    utils.run_command(f"{python} -m build --{target}")
 
 
 @main.command
@@ -112,7 +118,6 @@ def publish(test_pypi=False):
         command = f"{python} -mtwine upload dist/*"
 
     utils.run_command(command)
-
 
 
 @main.command
