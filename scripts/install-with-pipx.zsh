@@ -4,6 +4,6 @@
 
 set -eu
 
-project_root=${o:a:h:h}
+project_root=${0:a:h:h}
 
 pipx install --force $project_root
