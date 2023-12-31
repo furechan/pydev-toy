@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Install pydev tool with pipx
+# Install pydev-tool with pipx
 
 set -eu
 
