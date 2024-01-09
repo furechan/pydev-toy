@@ -57,5 +57,5 @@ pipx install git+ssh://git@github.com/furechan/pydev-tool.git
 - [packaging_tools_comparisons](https://sinoroc.gitlab.io/kb/python/packaging_tools_comparisons.html) Packaging tools comparisons
 - [task_runners](https://sinoroc.gitlab.io/kb/python/task_runners.html) Python Task Runners
 - [click](https://click.palletsprojects.com/) Python composable command line interface toolkit
-- [invoke](https://www.pyinvoke.org/) Pythonic task management & command execution
 - [build](https://github.com/pypa/build) A simple, correct Python build frontend
+- [twine](https://github.com/pypa/twine/) Utilities for interacting with PyPI
