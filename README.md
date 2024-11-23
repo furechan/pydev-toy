@@ -1,19 +1,15 @@
 # Python cli prototype to manage simple projects 
 
-Basic command line tool to manage standard `pyproject.toml` based projects.
-This is a prototype cli built with `click` that can run multiple project
+Set of command line utils to manage `pyproject.toml` based projects.
+The command line is built with `click` and can run multiple project
 related tasks in sequence from the command line.
 
 ```console
 pydev clean build dump
 ```
 
-This project is exploratory and may be usefull as a template for custom workflows
-when not commited to tool chains like `poetry`, `pdm`, `hatch`, etc ...
-
-The idea is to implement generic project tasks that can be run outside the project venv, 
-so that the script can be installed in a system/base python environment
-without cluttering the project venv.
+This project is exploratory and may be usefull as basis for custom workflows
+independently from backend specific tools like `poetry`, `pdm`, `hatch`, etc ...
 
 The script uses only standard python packaging tools like `build` and `twine` and
 is independent from any project build backends.
@@ -53,7 +49,6 @@ pipx install git+ssh://git@github.com/furechan/pydev-tool.git
 ```
 
 ## Related Projects & Resources
-- [packaging.python.org](https://packaging.python.org/en/latest/) Packaging User Guide
 - [packaging_tools_comparisons](https://sinoroc.gitlab.io/kb/python/packaging_tools_comparisons.html) Packaging tools comparisons
 - [task_runners](https://sinoroc.gitlab.io/kb/python/task_runners.html) Python Task Runners
 - [click](https://click.palletsprojects.com/) Python composable command line interface toolkit

@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "pydev-tool"
 version = "0.0.0"
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 dependencies = [ "click", "tomli", "build", "twine" ]
 optional-dependencies.dev = [ "ipykernel" ]
 
