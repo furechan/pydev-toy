@@ -5,6 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "pydev-tool"
 version = "0.0.0"
+readme = "README.md"
 requires-python = ">=3.8"
 dependencies = [ "click", "tomli", "build", "twine" ]
 optional-dependencies.dev = [ "ipykernel" ]
@@ -14,3 +15,6 @@ packages = ["src/pydev"]
 
 [project.scripts]
 pydev = "pydev:main"
+
+[tool.pydev]
+allow-publish = true
