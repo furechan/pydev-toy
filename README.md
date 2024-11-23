@@ -10,7 +10,7 @@ pydev clean build dump
 
 This project is exploratory and may be found usefull as basis for custom workflows.
 The project uses standard python packaging tools like `build` and `twine`
-independently from any specific build backends `setuputils`, `hatch`, `pdm`, etc ...
+independently from any build backend like `setuputils`, `hatch`, `pdm`, etc ...
 
 
 
