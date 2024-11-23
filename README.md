@@ -38,7 +38,7 @@ Commands:
 The tool is best installed as a script in a separate ennvironment using `pipx` or `uv tool`.
 
 ```console
-pipx install https://github.com/furechan/pydev-tool/archive/main.zip
+pipx install git+https://github.com/furechan/pydev-tool.git
 ```
 
 ## Related Projects & Resources
