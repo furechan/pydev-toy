@@ -1,4 +1,4 @@
-""" pydev utils """
+"""pydev utils"""
 
 import os
 import sys
@@ -24,7 +24,7 @@ def get_python():
 
 @lru_cache
 def get_project_root(strict=False):
-    """ Walk up to find pyproject.toml """
+    """Walk up to find pyproject.toml"""
 
     cwd = Path.cwd()
 
@@ -37,7 +37,7 @@ def get_project_root(strict=False):
 
 
 def run_command(command, echo=True, strict=False, chgdir=True):
-    """ Run shell command """
+    """Run shell command"""
 
     if echo:
         print(command)
@@ -57,7 +57,7 @@ def run_command(command, echo=True, strict=False, chgdir=True):
 
 @lru_cache
 def load_config():
-    """ Load pyproject.toml file """
+    """Load pyproject.toml file"""
 
     pyproject = Path("pyproject.toml").resolve(strict=True)
 
@@ -66,7 +66,7 @@ def load_config():
 
 
 def get_config(item: str, default=None):
-    """ Query pyproject.toml file """
+    """Query pyproject.toml file"""
 
     data = load_config()
 
@@ -79,7 +79,7 @@ def get_config(item: str, default=None):
 
 
 def search_path(pattern: str, path=None):
-    """ Search items in path """
+    """Search items in path"""
 
     if path is None:
         path = os.getenv("PATH")
@@ -94,7 +94,7 @@ def search_path(pattern: str, path=None):
 
 
 def system_python(version=None):
-    """ Python in the system path """
+    """Python in the system path"""
     if not version:
         version = "3"
 
@@ -108,7 +108,7 @@ def system_python(version=None):
 
 
 def pyenv_versions():
-    """ pyenv versions """
+    """pyenv versions"""
 
     pyenv_root = os.getenv("PYENV_ROOT", "~/.pyenv")
     pyenv_root = Path(pyenv_root).expanduser()
@@ -117,7 +117,7 @@ def pyenv_versions():
 
 
 def pyenv_python(version: str = None) -> Path:
-    """ pyenv binary for version prefix """
+    """pyenv binary for version prefix"""
 
     if not version:
         version = "3.*"
@@ -136,19 +136,16 @@ def pyenv_python(version: str = None) -> Path:
 
 
 def conda_envs():
-    """ conda environments """
+    """conda environments"""
 
     conda_root = os.getenv("CONDA_PREFIX", "~/miniconda3")
     conda_root = Path(conda_root).expanduser()
 
-    return [
-        p for p in conda_root.glob("envs/*")
-        if p.joinpath("bin/python").exists()
-    ]
+    return [p for p in conda_root.glob("envs/*") if p.joinpath("bin/python").exists()]
 
 
 def conda_python(name: str = None) -> Path:
-    """ conda binary for named env """
+    """conda binary for named env"""
 
     conda_root = os.getenv("CONDA_PREFIX", "~/miniconda3")
     conda_root = Path(conda_root).expanduser()
@@ -163,7 +160,7 @@ def conda_python(name: str = None) -> Path:
 
 
 def which_python(version=None, target=None):
-    """ Locate python matching version/target """
+    """Locate python matching version/target"""
     if target == "pyenv":
         return pyenv_python(version)
 
@@ -179,9 +176,9 @@ def confirm_choice(message, default: bool = None):
 
     while True:
         user_input = input(prompt)
-        if user_input.lower() in ('y', 'yes'):
+        if user_input.lower() in ("y", "yes"):
             return True
-        if user_input.lower() in ('n', 'no'):
+        if user_input.lower() in ("n", "no"):
             return False
-        if user_input == '' and default is not None:
+        if user_input == "" and default is not None:
             return default

@@ -1,4 +1,4 @@
-""" pydev messages """
+"""pydev messages"""
 
 ALLOW_PUBLISH = """
 publish needs to be enabled in pyproject.toml.

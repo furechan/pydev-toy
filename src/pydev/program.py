@@ -1,4 +1,4 @@
-""" pydev program """
+"""pydev program"""
 
 import json
 import click
@@ -21,13 +21,13 @@ def main():
 
 @main.command
 def pwd():
-    """ Run pwd """
+    """Run pwd"""
     utils.run_command("pwd", echo=False)
 
 
 @main.command
 def info():
-    """ Project information """
+    """Project information"""
     name = utils.get_config("project.name")
     version = utils.get_config("project.version")
     project_root = utils.get_project_root()
@@ -46,9 +46,9 @@ def info():
 
 @main.command
 def clean():
-    """ Delete build and dist folders """
+    """Delete build and dist folders"""
     project_root = utils.get_project_root(strict=True)
-    folders = 'build', 'dist'
+    folders = "build", "dist"
 
     for folder in folders:
         path = project_root.joinpath(folder)
@@ -58,16 +58,17 @@ def clean():
 
 
 @main.command
-@click.option('-y', '--yes', is_flag=True)
+@click.option("-y", "--yes", is_flag=True)
 def prune(yes):
-    """ Delete all runtime folders """
+    """Delete all runtime folders"""
     project_root = utils.get_project_root(strict=True)
-    folders = 'build', 'dist', ".venv", ".nox", ".tox"
+    folders = "build", "dist", ".venv", ".nox", ".tox"
 
-    folders = [f for f in folders
-               if project_root.joinpath(f).exists()]
+    folders = [f for f in folders if project_root.joinpath(f).exists()]
 
-    confirm = yes or utils.confirm_choice(f"Do you want to delete runtime folders {folders}")
+    confirm = yes or utils.confirm_choice(
+        f"Do you want to delete runtime folders {folders}"
+    )
     if not confirm:
         exit(1)
 
@@ -80,7 +81,7 @@ def prune(yes):
 
 @main.command
 def build():
-    """ Build project wheel """
+    """Build project wheel"""
     python = utils.get_python()
     project_root = utils.get_project_root()
     if project_root.joinpath("setup.py").exists():
@@ -92,7 +93,7 @@ def build():
 
 @main.command
 def dump():
-    """ Dump wheel and dist contents """
+    """Dump wheel and dist contents"""
     project_root = utils.get_project_root()
     dist = project_root.joinpath("dist")
 
@@ -104,9 +105,9 @@ def dump():
 
 
 @main.command
-@click.option('-t', '--test-pypi', is_flag=True)
+@click.option("-t", "--test-pypi", is_flag=True)
 def publish(test_pypi=False):
-    """ Publish project with twine """
+    """Publish project with twine"""
     if not utils.get_config("tool.pydev.allow-publish"):
         print(messages.ALLOW_PUBLISH)
         exit(1)
@@ -121,12 +122,14 @@ def publish(test_pypi=False):
 
 
 @main.command
-@click.argument('version', default='')
-@click.option('--system', 'target', flag_value='system', default=True, help="Use system python")
-@click.option('--pyenv', 'target', flag_value='pyenv', help="Use pyenv version")
-@click.option('--conda', 'target', flag_value='conda', help="Use conda env")
+@click.argument("version", default="")
+@click.option(
+    "--system", "target", flag_value="system", default=True, help="Use system python"
+)
+@click.option("--pyenv", "target", flag_value="pyenv", help="Use pyenv version")
+@click.option("--conda", "target", flag_value="conda", help="Use conda env")
 def which(version, target):
-    """ Locate python by version and target """
+    """Locate python by version and target"""
     if python := utils.which_python(version, target):
         print(python)
     else:
