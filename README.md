@@ -1,4 +1,4 @@
-# Command line utils to manage python projects 
+# Command line utils to manage simple python projects 
 
 Set of command line utils to manage `pyproject.toml` based projects.
 The command line is built with `click` and can run multiple project
@@ -10,8 +10,7 @@ pydev clean build dump
 
 This project is exploratory and may be found usefull as basis for custom workflows.
 The project uses standard python packaging tools like `build` and `twine`
-independently from any build backend like `setuputils`, `hatch`, `pdm`, etc ...
-
+independently from any build backend like `setuptools`, `hatch`, `pdm`, etc ...
 
 
 ## Usage
