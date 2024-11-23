@@ -1,4 +1,4 @@
-# Python cli prototype to manage simple projects 
+# Command line utils to manage python projects 
 
 Set of command line utils to manage `pyproject.toml` based projects.
 The command line is built with `click` and can run multiple project
@@ -8,11 +8,10 @@ related tasks in sequence from the command line.
 pydev clean build dump
 ```
 
-This project is exploratory and may be usefull as basis for custom workflows
-independently from backend specific tools like `poetry`, `pdm`, `hatch`, etc ...
+This project is exploratory and may be found usefull as basis for custom workflows.
+The project uses standard python packaging tools like `build` and `twine`
+independently from any specific build backends `setuputils`, `hatch`, `pdm`, etc ...
 
-The script uses only standard python packaging tools like `build` and `twine` and
-is independent from any project build backends.
 
 
 ## Usage
@@ -37,12 +36,7 @@ Commands:
 
 ## Installation
 
-> **Warning**
-This project installs a script called `pydev`
-which is the same name as other projects like
-[pydev](https://pypi.org/project/pydev/).
-
-You can install the latest version of this package with `pip` or `pipx`.
+The tool is best installed as a script in a separate ennvironment using `pipx` or `uv tool`.
 
 ```console
 pipx install git+ssh://git@github.com/furechan/pydev-tool.git
