@@ -1,7 +1,7 @@
 # Command line utils to manage simple python projects 
 
 Set of command line utils to manage `pyproject.toml` based projects.
-The command line is built with `click` and can run multiple project
+The tool `pydev` is built with `click` and can run multiple project
 related tasks in sequence from the command line.
 
 ```console
@@ -35,7 +35,7 @@ Commands:
 
 ## Installation
 
-The tool is best installed as a script in a separate ennvironment using `pipx` or `uv tool`.
+The `pydev` tool is best installed as a script in a separate ennvironment using `pipx` or `uv tool`.
 
 ```console
 pipx install git+https://github.com/furechan/pydev-tool.git
