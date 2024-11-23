@@ -42,8 +42,10 @@ pipx install git+https://github.com/furechan/pydev-tool.git
 ```
 
 ## Related Projects & Resources
-- [packaging_tools_comparisons](https://sinoroc.gitlab.io/kb/python/packaging_tools_comparisons.html) Packaging tools comparisons
-- [task_runners](https://sinoroc.gitlab.io/kb/python/task_runners.html) Python Task Runners
+- [Packaging tools](https://sinoroc.gitlab.io/kb/python/packaging_tools_comparisons.html) Comparison of different packaging tools
+- [setuptools](https://setuptools.pypa.io/en/latest/) Setuptools is a fully-featured, actively-maintained, and stable library designed to facilitate packaging Python projects.
+- [hatch](https://hatch.pypa.io/latest/) Hatch is a modern, extensible Python project manager.
+- [pdm](https://pdm-project.org/en/latest/) Modern Python package and dependency manager supporting the latest PEP standards 
 - [click](https://click.palletsprojects.com/) Python composable command line interface toolkit
 - [build](https://github.com/pypa/build) A simple, correct Python build frontend
 - [twine](https://github.com/pypa/twine/) Utilities for interacting with PyPI
