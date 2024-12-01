@@ -8,10 +8,15 @@ version = "0.0.1"
 readme = "README.md"
 requires-python = ">=3.8"
 dependencies = [ "click", "tomli", "build", "twine" ]
-optional-dependencies.dev = [ "ipykernel" ]
+
+[dependency-groups]
+dev = [ "pytest", "ipykernel", "build", "twine" ]
 
 [tool.hatch.build]
-packages = ["src/pydev"]
+targets.wheel.sources = ["src"]
+dev-mode-dirs = ["src"]
+only-include = ["src"]
+exclude = [".*"]
 
 [project.scripts]
 pydev = "pydev:main"
