@@ -1,4 +1,4 @@
-# Command line utils to manage simple python projects 
+# Command line util to manage python projects 
 
 Set of command line utils to manage standard `pyproject.toml` based projects.
 The tool `pydev` is built with `click` and can run multiple commands in sequence.
