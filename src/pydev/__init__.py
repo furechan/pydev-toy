@@ -1,3 +1,3 @@
 """pydev"""
 
-from .program import main
+from .program import main as main
