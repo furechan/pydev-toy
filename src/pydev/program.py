@@ -1,5 +1,6 @@
 """pydev program"""
 
+import re
 import json
 import click
 import shutil
@@ -20,14 +21,8 @@ def main():
 
 
 @main.command
-def pwd():
-    """Run pwd"""
-    utils.run_command("pwd", echo=False)
-
-
-@main.command
 def info():
-    """Project information"""
+    """Project info including pypi versions"""
     name = utils.get_config("project.name")
     version = utils.get_config("project.version")
     project_root = utils.get_project_root()
@@ -80,6 +75,26 @@ def prune(yes):
 
 
 @main.command
+def bump():
+    """Bump static version in pyproject.toml"""
+    project_root = utils.get_project_root()
+    pyproject = project_root.joinpath("pyproject.toml").resolve(strict=True)
+    buffer = pyproject.read_text()
+    pattern = r"^version \s* = \s* \"(.+)\" \s*"
+    match = re.search(pattern, buffer, flags=re.VERBOSE | re.MULTILINE)
+    if not match:
+        raise ValueError("Could not find version setting")
+    version = tuple(int(i) for i in match.group(1).split("."))
+    version = version[:-1] + (version[-1] + 1,)
+    version = ".".join(str(v) for v in version)
+    print(f"Updating version to {version} ...")
+    output = re.sub(
+        pattern, f'version = "{version}"\n', buffer, flags=re.VERBOSE | re.MULTILINE
+    )
+    pyproject.write_text(output)
+
+
+@main.command
 def build():
     """Build project wheel"""
     python = utils.get_python()
@@ -93,7 +108,7 @@ def build():
 
 @main.command
 def dump():
-    """Dump wheel and dist contents"""
+    """Dump wheel and sdist contents"""
     project_root = utils.get_project_root()
     dist = project_root.joinpath("dist")
 
@@ -119,18 +134,3 @@ def publish(test_pypi=False):
         command = f"{python} -mtwine upload dist/*"
 
     utils.run_command(command)
-
-
-@main.command
-@click.argument("version", default="")
-@click.option(
-    "--system", "target", flag_value="system", default=True, help="Use system python"
-)
-@click.option("--pyenv", "target", flag_value="pyenv", help="Use pyenv version")
-@click.option("--conda", "target", flag_value="conda", help="Use conda env")
-def which(version, target):
-    """Locate python by version and target"""
-    if python := utils.which_python(version, target):
-        print(python)
-    else:
-        print(f"Python {version} for {target} not found!")
