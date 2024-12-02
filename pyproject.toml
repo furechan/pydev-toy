@@ -4,15 +4,15 @@ build-backend = "hatchling.build"
 
 [project]
 name = "pydev-toy"
-version = "0.0.3"
+version = "0.0.6"
 readme = "README.md"
-license = { text = "MIT License" }
+license = "MIT"
 requires-python = ">=3.9"
 description = "Command line util to manage python projects"
+urls.homepage = "https://github.com/furechan/pydev-toy"
 dependencies = [ "click", "tomli", "build", "twine" ]
 classifiers = [
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
 
