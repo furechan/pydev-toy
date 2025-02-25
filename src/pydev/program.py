@@ -121,16 +121,22 @@ def dump():
 
 @main.command
 @click.option("-t", "--test-pypi", is_flag=True)
-def publish(test_pypi=False):
+@click.option("-v", "--verbose", is_flag=True)
+def publish(test_pypi=False, verbose=False):
     """Publish project with twine"""
+
     if not utils.get_config("tool.pydev.allow-publish"):
         print(messages.ALLOW_PUBLISH)
         exit(1)
 
     python = utils.get_python()
+
+    flags = ""
     if test_pypi:
-        command = f"{python} -mtwine upload --repository testpypi dist/*"
-    else:
-        command = f"{python} -mtwine upload dist/*"
+        flags += " --repository testpypi"
+    if verbose:
+        flags += " --verbose"
+
+    command = f"{python} -mtwine upload {flags} dist/*"
 
     utils.run_command(command)
