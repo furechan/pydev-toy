@@ -40,6 +40,8 @@ pipx install pydev-toy
 ```
 
 ## Related Projects & Resources
+- [slap](https://github.com/NiklasRosenstein/slap)
+ CLI to assist in the process for developing and releasing Python packages
 - [Packaging tools](https://sinoroc.gitlab.io/kb/python/packaging_tools_comparisons.html) Comparison of different packaging tools
 - [setuptools](https://setuptools.pypa.io/en/latest/) Setuptools is a fully-featured, actively-maintained, and stable library designed to facilitate packaging Python projects.
 - [hatch](https://hatch.pypa.io/latest/) Hatch is a modern, extensible Python project manager.
