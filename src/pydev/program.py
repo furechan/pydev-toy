@@ -1,13 +1,9 @@
 """pydev program"""
 
-import re
-import json
+import sys
 import click
 import shutil
 import logging
-
-from urllib import request
-from urllib.error import HTTPError
 
 from . import utils
 from . import messages
@@ -26,17 +22,11 @@ def info():
     name = utils.get_config("project.name")
     version = utils.get_config("project.version")
     project_root = utils.get_project_root()
+    releases = utils.pypi_releases(name)
     print("name", name)
     print("version", version)
     print("location", project_root)
-    url = f"https://pypi.org/pypi/{name}/json"
-    try:
-        res = request.urlopen(url)
-        data = json.load(res)
-        releases = list(data["releases"])
-        print("pypi.releases", releases)
-    except HTTPError:
-        pass
+    print("pypi.releases", releases)
 
 
 @main.command
@@ -77,33 +67,13 @@ def prune(yes):
 @main.command
 def bump():
     """Bump static version in pyproject.toml"""
-    project_root = utils.get_project_root()
-    pyproject = project_root.joinpath("pyproject.toml").resolve(strict=True)
-    buffer = pyproject.read_text()
-    pattern = r"^version \s* = \s* \"(.+)\" \s*"
-    match = re.search(pattern, buffer, flags=re.VERBOSE | re.MULTILINE)
-    if not match:
-        raise ValueError("Could not find version setting")
-    version = tuple(int(i) for i in match.group(1).split("."))
-    version = version[:-1] + (version[-1] + 1,)
-    version = ".".join(str(v) for v in version)
-    print(f"Updating version to {version} ...")
-    output = re.sub(
-        pattern, f'version = "{version}"\n', buffer, flags=re.VERBOSE | re.MULTILINE
-    )
-    pyproject.write_text(output)
+    utils.bump_version()
 
 
 @main.command
 def build():
     """Build project wheel"""
-    python = utils.get_python()
-    project_root = utils.get_project_root()
-    if project_root.joinpath("setup.py").exists():
-        target = "sdist"
-    else:
-        target = "wheel"
-    utils.run_command(f"{python} -m build --{target}")
+    utils.build_project()
 
 
 @main.command
@@ -129,7 +99,9 @@ def publish(test_pypi=False, verbose=False):
         print(messages.ALLOW_PUBLISH)
         exit(1)
 
-    python = utils.get_python()
+    utils.build_project(clean=True, auto_bump=True)
+
+    python = sys.executable
 
     flags = ""
     if test_pypi:

@@ -45,15 +45,13 @@ def bump(ctx):
     """Bump patch version in pyproject"""
     pyproject = ROOT.joinpath("pyproject.toml").resolve(strict=True)
     buffer = pyproject.read_text()
-    pattern = r"^version \s* = \s* \"(.+)\" \s*"
-    match = re.search(pattern, buffer, flags=re.VERBOSE | re.MULTILINE)
+    pattern = re.compile(r"(?mx)^version \s* = \s* \"(.+)\" \s*")
+    match = pattern.search(buffer)
     if not match:
         raise ValueError("Could not find version setting")
     version = tuple(int(i) for i in match.group(1).split("."))
     version = version[:-1] + (version[-1] + 1,)
     version = ".".join(str(v) for v in version)
     print(f"Updating version to {version} ...")
-    output = re.sub(
-        pattern, f'version = "{version}"\n', buffer, flags=re.VERBOSE | re.MULTILINE
-    )
+    output = pattern.sub(f'version = "{version}"\n', buffer)
     pyproject.write_text(output)

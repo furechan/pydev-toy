@@ -1,33 +1,40 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
 [project]
 name = "pydev-toy"
-version = "0.0.9"
+version = "0.0.12"
 readme = "README.md"
 license = "MIT"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
+keywords = ["pyproject", "cli"]
 description = "Command line util to manage python projects"
 urls.homepage = "https://github.com/furechan/pydev-toy"
-dependencies = [ "click", "tomli", "build", "twine" ]
+dependencies = [
+    "click",
+    "tomli",
+    "jmespath",
+    "semver",
+    "build",
+    "twine",
+]
 classifiers = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",
 ]
 
+[project.scripts]
+pydev = "pydev:main"
+
 [dependency-groups]
-dev = [ "pytest", "ipykernel", "invoke" ]
-
-
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+dev = ["pytest", "ipykernel", "invoke"]
 
 [tool.hatch.build]
 targets.wheel.sources = ["src"]
 dev-mode-dirs = ["src"]
 only-include = ["src"]
 exclude = [".*"]
-
-[project.scripts]
-pydev = "pydev:main"
 
 [tool.pydev]
 allow-publish = true

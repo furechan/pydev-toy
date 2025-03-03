@@ -1,15 +1,15 @@
 # Command line util to manage python projects 
 
-Set of command line utils to manage standard `pyproject.toml` based projects.
-The tool `pydev` is built with `click` and can run multiple commands in sequence.
+Command line utility to manage standard `pyproject.toml` based projects.
+The interface is built with `click` and can run multiple commands in sequence.
 
 ```console
 pydev clean build dump
 ```
 
-This project is exploratory and may be found usefull as basis for custom workflows.
-The project uses standard python packaging tools like `build` and `twine`
-independently from any build backend like `setuptools`, `hatch`, `pdm`, etc ...
+This project is exploratory and may be usefull as a basis for custom workflows.
+The library uses standard python packaging tools like `build` and `twine`
+and works independently from the build backend.
 
 
 ## Usage
@@ -40,12 +40,19 @@ pipx install pydev-toy
 ```
 
 ## Related Projects & Resources
+- [Packaging tools](https://sinoroc.gitlab.io/kb/python/packaging_tools_comparisons.html)
+Comparison of different packaging tools
+- [uv](https://github.com/astral-sh/uv)
+An extremely fast Python package and project manager, written in Rust
+- [hatch](https://hatch.pypa.io/latest/)
+Hatch is a modern, extensible Python project manager
+- [pdm](https://pdm-project.org/en/latest/)
+Modern Python package and dependency manager supporting the latest PEP standards 
+- [click](https://click.palletsprojects.com/)
+Python composable command line interface toolkit
+- [build](https://github.com/pypa/build)
+A simple, correct Python build frontend
+- [twine](https://github.com/pypa/twine/)
+Utilities for interacting with PyPI
 - [slap](https://github.com/NiklasRosenstein/slap)
- CLI to assist in the process for developing and releasing Python packages
-- [Packaging tools](https://sinoroc.gitlab.io/kb/python/packaging_tools_comparisons.html) Comparison of different packaging tools
-- [setuptools](https://setuptools.pypa.io/en/latest/) Setuptools is a fully-featured, actively-maintained, and stable library designed to facilitate packaging Python projects.
-- [hatch](https://hatch.pypa.io/latest/) Hatch is a modern, extensible Python project manager.
-- [pdm](https://pdm-project.org/en/latest/) Modern Python package and dependency manager supporting the latest PEP standards 
-- [click](https://click.palletsprojects.com/) Python composable command line interface toolkit
-- [build](https://github.com/pypa/build) A simple, correct Python build frontend
-- [twine](https://github.com/pypa/twine/) Utilities for interacting with PyPI
+CLI to assist in the process for developing and releasing Python packages
