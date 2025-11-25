@@ -21,7 +21,8 @@ def main():
 
 
 @main.command
-def info():
+@click.pass_context
+def info(ctx):
     """Project info including pypi versions"""
     name = utils.get_config("project.name")
     version = utils.get_config("project.version")
@@ -34,7 +35,8 @@ def info():
 
 
 @main.command
-def clean():
+@click.pass_context
+def clean(ctx):
     """Delete build and dist folders"""
     root = utils.project_root(strict=True)
     dist = root.joinpath("dist")
@@ -45,8 +47,9 @@ def clean():
 
 
 @main.command
+@click.pass_context
 @click.option("-y", "--yes", is_flag=True)
-def prune(yes):
+def prune(ctx, yes):
     """Delete all runtime folders"""
     root = utils.project_root(strict=True)
     folders = "build", "dist", ".venv", ".nox", ".tox"
@@ -68,7 +71,8 @@ def prune(yes):
 
 
 @main.command
-def dump():
+@click.pass_context
+def dump(ctx):
     """Dump wheel and sdist contents"""
     root = utils.project_root(strict=True)
     dist = root.joinpath("dist")
@@ -81,7 +85,8 @@ def dump():
 
 
 @main.command
-def bump():
+@click.pass_context
+def bump(ctx):
     """Bump patch version in pyproject"""
     root = utils.project_root(strict=True)
     pyproject = root.joinpath("pyproject.toml").resolve(strict=True)
@@ -97,14 +102,15 @@ def bump():
 
 
 @main.command
+@click.pass_context
 @click.option("-c", "--clean", is_flag=True)
 @click.option("-a", "--auto-bump", is_flag=True)
-def build(*, clean=False, auto_bump=False):
+def build(ctx, *, clean=False, auto_bump=False):
     """Build project wheel"""
 
     # bump version if needed
     if auto_bump and utils.already_released():
-        bump()
+        ctx.invoke(bump)
 
     python = sys.executable
     root = utils.project_root(strict=True)
@@ -126,16 +132,17 @@ def build(*, clean=False, auto_bump=False):
 
 
 @main.command
+@click.pass_context
 @click.option("-t", "--test-pypi", is_flag=True)
 @click.option("-v", "--verbose", is_flag=True)
-def publish(test_pypi=False, verbose=False):
+def publish(ctx, test_pypi=False, verbose=False):
     """Publish project with twine"""
 
     if not utils.get_config("tool.pydev.allow-publish"):
         print(messages.ALLOW_PUBLISH)
         exit(1)
 
-    build(clean=True, auto_bump=True)
+    ctx.invoke(build, clean=True, auto_bump=True)
 
     python = sys.executable
 

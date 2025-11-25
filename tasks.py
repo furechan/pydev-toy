@@ -66,19 +66,22 @@ def publish(c):
         version = get_version(c)
 
         if dotgit.exists():
-            c.run("git pull --rebase")
+            # Fetch remote and ensure we're up to date
+            c.run("git fetch -q")
+            c.run("git rev-list --count @{u}.. >/dev/null")
 
         if version.is_prerelease:
+            # Bump to stable version
             c.run("uv version --bump stable")
             version = get_version(c)
 
         c.run("uv build --wheel")
-        c.run("uv publish")
 
         if dotgit.exists():
-            c.run(f"git tag v{version}")
-            c.run(f"git commit -am 'Published v{version}'")
-
+            c.run(f"git commit -am 'Release {version}'")
+            c.run("git push")
+ 
+        c.run("uv publish")
         c.run("uv version --bump patch --bump dev")
         version = get_version(c)
 
