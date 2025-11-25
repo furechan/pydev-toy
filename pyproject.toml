@@ -8,7 +8,7 @@ module-name = "pydev"
 
 [project]
 name = "pydev-toy"
-version = "0.0.14.dev0"
+version = "0.0.14"
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.10"
@@ -17,9 +17,9 @@ description = "Command line util to manage python projects"
 urls.homepage = "https://github.com/furechan/pydev-toy"
 dependencies = [
     "click",
-    "tomli",
+    "tomlkit",
     "jmespath",
-    "semver",
+    "packaging",
     "build",
     "twine",
 ]
@@ -36,7 +36,7 @@ dev = [
     "pytest",
     "ipykernel",
     "invoke",
-    "packaging>=24.2",
+    "packaging",
 ]
 
 

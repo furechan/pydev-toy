@@ -1,12 +1,8 @@
 """pydev utils"""
 
 import os
-import re
-import sys
 import json
 import tomli
-import shutil
-import semver
 import subprocess
 
 from pathlib import Path
@@ -20,7 +16,7 @@ from urllib.error import HTTPError
 
 
 @lru_cache
-def get_project_root(strict=False):
+def project_root(strict=False):
     """Walk up to find pyproject.toml"""
 
     cwd = Path.cwd()
@@ -41,7 +37,7 @@ def run_command(command, echo=True, strict=False, chgdir=True):
 
     cwd = None
     if chgdir:
-        cwd = get_project_root()
+        cwd = project_root()
         if cwd is None:
             print("pyproject.toml file not found!")
             exit(1)
@@ -52,13 +48,15 @@ def run_command(command, echo=True, strict=False, chgdir=True):
         raise RuntimeError("Command failed!")
 
 
+
 @lru_cache
 def load_config():
     """Load pyproject.toml file"""
 
-    pyproject = Path("pyproject.toml").resolve(strict=True)
+    root = project_root(strict=True)
+    pyproject = root.joinpath("pyproject.toml").resolve(strict=True)
 
-    with pyproject.open("rb") as f:
+    with open(pyproject, "rb") as f:
         return tomli.load(f)
 
 
@@ -80,6 +78,7 @@ def search_path(pattern: str, path=None):
 
     if path is None:
         path = os.getenv("PATH")
+
     if isinstance(path, str):
         path = path.split(os.pathsep)
     if isinstance(path, os.PathLike):
@@ -115,22 +114,11 @@ def pypi_releases(name):
         return []
 
 
-def bump_version():
-    """Bump patch version in pyproject"""
-    project_root = get_project_root()
-    pyproject = project_root.joinpath("pyproject.toml").resolve(strict=True)
-    buffer = pyproject.read_text()
-    pattern = re.compile(
-        r'^version \s* = \s* "(.+)" \s*', flags=re.VERBOSE | re.MULTILINE
-    )
-    if match := pattern.search(buffer):
-        version = semver.VersionInfo.parse(match.group(1))
-    else:
-        raise ValueError("Could not find version setting")
-    new_version = version.bump_patch()
-    print(f"Updating version to {new_version} ...")
-    output = pattern.sub(f'version = "{new_version}"\n', buffer)
-    pyproject.write_text(output)
+def bump_version(version):
+    """Bump patch version"""
+    if isinstance(version, str):
+        version = Version(version)
+    return f"{version.major}.{version.minor}.{version.micro + 1}"
 
 
 def already_released():
@@ -139,27 +127,3 @@ def already_released():
     releases = pypi_releases(name)
     return version in releases
 
-
-def build_project(*, clean=False, auto_bump=False):
-    """Build project wheel"""
-
-    # bump version if needed
-    if auto_bump and already_released():
-        bump_version()
-
-    python = sys.executable
-    project_root = get_project_root(strict=True)
-    dist = project_root.joinpath("dist")
-
-    # clean dist folder if present
-    if clean and dist.is_dir():
-        print(f"rmtree {dist}")
-        shutil.rmtree(dist)
-
-    # pick target depending on setup config
-    if project_root.joinpath("setup.py").exists():
-        target = "sdist"
-    else:
-        target = "wheel"
-
-    run_command(f"{python} -m build --{target}")

@@ -2,6 +2,7 @@
 
 import sys
 import click
+import tomlkit
 import shutil
 import logging
 
@@ -21,7 +22,7 @@ def info():
     """Project info including pypi versions"""
     name = utils.get_config("project.name")
     version = utils.get_config("project.version")
-    project_root = utils.get_project_root()
+    project_root = utils.project_root()
     releases = utils.pypi_releases(name)
     print("name", name)
     print("version", version)
@@ -32,7 +33,7 @@ def info():
 @main.command
 def clean():
     """Delete build and dist folders"""
-    project_root = utils.get_project_root(strict=True)
+    project_root = utils.project_root(strict=True)
     folders = "build", "dist"
 
     for folder in folders:
@@ -46,7 +47,7 @@ def clean():
 @click.option("-y", "--yes", is_flag=True)
 def prune(yes):
     """Delete all runtime folders"""
-    project_root = utils.get_project_root(strict=True)
+    project_root = utils.project_root(strict=True)
     folders = "build", "dist", ".venv", ".nox", ".tox"
 
     folders = [f for f in folders if project_root.joinpath(f).exists()]
@@ -66,20 +67,52 @@ def prune(yes):
 
 @main.command
 def bump():
-    """Bump static version in pyproject.toml"""
-    utils.bump_version()
+    """Bump patch version in pyproject"""
+    root = utils.project_root()
+    pyproject = root.joinpath("pyproject.toml").resolve(strict=True)
+
+    config = tomlkit.loads(pyproject.read_text())
+    version = config["project"]["version"]
+    version = utils.bump_version(version)
+    config["project"]["version"] = str(version)
+
+    print(f"Updating version to {version} ...")
+    pyproject.write_text(tomlkit.dumps(config))
+
 
 
 @main.command
-def build():
+@click.option("-c", "--clean", is_flag=True)
+@click.option("-b", "--bump", is_flag=True)
+def build(*, clean=False, auto_bump=False):
     """Build project wheel"""
-    utils.build_project()
+
+    # bump version if needed
+    if auto_bump and utils.already_released():
+        bump()
+
+    python = sys.executable
+    root = utils.project_root(strict=True)
+    dist = root.joinpath("dist")
+
+    # clean dist folder if present
+    if clean and dist.is_dir():
+        print(f"rmtree {dist}")
+        shutil.rmtree(dist)
+
+    # pick target depending on setup config
+    if root.joinpath("setup.py").exists():
+        target = "sdist"
+    else:
+        target = "wheel"
+
+    utils.run_command(f"{python} -m build --{target}")
 
 
 @main.command
 def dump():
     """Dump wheel and sdist contents"""
-    project_root = utils.get_project_root()
+    project_root = utils.project_root()
     dist = project_root.joinpath("dist")
 
     for file in dist.glob("*.whl"):
