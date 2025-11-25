@@ -13,6 +13,10 @@ TEMPLATE_URL = "https://raw.githubusercontent.com/furechan/pydev-toy/main/tasks.
 ROOTDIR = Path(__file__).parent
 
 
+def get_version(c) -> str:
+    return Version(c.run("uv version --short", hide=True).stdout.strip())
+
+
 def bump_version(version: str | Version) -> str:
     """Bump patch version"""
     if isinstance(version, str):
@@ -56,17 +60,29 @@ def build(c):
 def publish(c):
     """Build and publish package wheel"""
 
+    dotgit = ROOTDIR.joinpath(".git")
+
     with c.cd(ROOTDIR):
-        version = Version(c.run("uv version --short").stdout)
+        version = get_version(c)
+
+        if dotgit.exists():
+            c.run("git pull --rebase")
 
         if version.is_prerelease:
             c.run("uv version --bump stable")
+            version = get_version(c)
 
         c.run("uv build --wheel")
         c.run("uv publish")
 
-        version = bump_version(version) + ".dev0"
+        if dotgit.exists():
+            c.run(f"git tag v{version}")
+            c.run(f"git commit -am 'Published v{version}'")
 
-        c.run(f"uv version {version}")
+        c.run("uv version --bump patch --bump dev")
+        version = get_version(c)
+
+        if dotgit.exists():
+            c.run(f"git commit -am 'Bump to version {version}'")
 
 

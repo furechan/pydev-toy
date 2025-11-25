@@ -29,18 +29,11 @@ def project_root(strict=False):
         raise FileNotFoundError("pyproject.toml")
 
 
-def run_command(command, echo=True, strict=False, chgdir=True):
+def run_command(command, *, cwd=None, echo=True, strict=False):
     """Run shell command"""
 
     if echo:
         print(command)
-
-    cwd = None
-    if chgdir:
-        cwd = project_root()
-        if cwd is None:
-            print("pyproject.toml file not found!")
-            exit(1)
 
     rc = subprocess.run(command, cwd=cwd, shell=True)
 
@@ -89,17 +82,11 @@ def search_path(pattern: str, path=None):
         yield from p.glob(pattern)
 
 
-def confirm_choice(message, default: bool = None):
+def confirm_choice(message):
     prompt = f"{message} (yes/no):"
-
-    while True:
-        user_input = input(prompt)
-        if user_input.lower() in ("y", "yes"):
-            return True
-        if user_input.lower() in ("n", "no"):
-            return False
-        if user_input == "" and default is not None:
-            return default
+    response = input(prompt)
+    return response.lower() in ("y", "yes")
+   
 
 
 def pypi_releases(name):

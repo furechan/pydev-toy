@@ -1,15 +1,18 @@
-"""pydev program"""
+"""pydev toy cli"""
 
 import sys
-import click
-import tomlkit
 import shutil
 import logging
+import tomlkit
+
+
+import click
 
 from . import utils
 from . import messages
 
 logger = logging.getLogger()
+
 
 
 @click.group(chain=True)
@@ -22,53 +25,65 @@ def info():
     """Project info including pypi versions"""
     name = utils.get_config("project.name")
     version = utils.get_config("project.version")
-    project_root = utils.project_root()
+    location = utils.project_root()
     releases = utils.pypi_releases(name)
     print("name", name)
     print("version", version)
-    print("location", project_root)
+    print("location", location)
     print("pypi.releases", releases)
 
 
 @main.command
 def clean():
     """Delete build and dist folders"""
-    project_root = utils.project_root(strict=True)
-    folders = "build", "dist"
+    root = utils.project_root(strict=True)
+    dist = root.joinpath("dist")
+    for f in dist.glob("*.whl"):
+        print(f"unlink {f.name}")
+        f.unlink()
 
-    for folder in folders:
-        path = project_root.joinpath(folder)
-        if path.is_dir():
-            print(f"rmtree {folder}")
-            shutil.rmtree(path)
 
 
 @main.command
 @click.option("-y", "--yes", is_flag=True)
 def prune(yes):
     """Delete all runtime folders"""
-    project_root = utils.project_root(strict=True)
+    root = utils.project_root(strict=True)
     folders = "build", "dist", ".venv", ".nox", ".tox"
-
-    folders = [f for f in folders if project_root.joinpath(f).exists()]
+    folders = [f for f in folders if root.joinpath(f).exists()]
 
     confirm = yes or utils.confirm_choice(
         f"Do you want to delete runtime folders {folders}"
     )
+
     if not confirm:
         exit(1)
 
     for folder in folders:
-        path = project_root.joinpath(folder)
+        path = root.joinpath(folder)
         if path.is_dir():
             print(f"rmtree {folder}")
             shutil.rmtree(path)
 
 
+
+@main.command
+def dump():
+    """Dump wheel and sdist contents"""
+    root = utils.project_root(strict=True)
+    dist = root.joinpath("dist")
+
+    for file in dist.glob("*.whl"):
+        utils.run_command(f"unzip -l {file}")
+
+    for file in dist.glob("*.tar.gz"):
+        utils.run_command(f"tar -ztvf {file}")
+
+
 @main.command
 def bump():
     """Bump patch version in pyproject"""
-    root = utils.project_root()
+    root = utils.project_root(strict=True)
     pyproject = root.joinpath("pyproject.toml").resolve(strict=True)
 
     config = tomlkit.loads(pyproject.read_text())
@@ -83,7 +98,7 @@ def bump():
 
 @main.command
 @click.option("-c", "--clean", is_flag=True)
-@click.option("-b", "--bump", is_flag=True)
+@click.option("-a", "--auto-bump", is_flag=True)
 def build(*, clean=False, auto_bump=False):
     """Build project wheel"""
 
@@ -109,18 +124,6 @@ def build(*, clean=False, auto_bump=False):
     utils.run_command(f"{python} -m build --{target}")
 
 
-@main.command
-def dump():
-    """Dump wheel and sdist contents"""
-    project_root = utils.project_root()
-    dist = project_root.joinpath("dist")
-
-    for file in dist.glob("*.whl"):
-        utils.run_command(f"unzip -l {file}")
-
-    for file in dist.glob("*.tar.gz"):
-        utils.run_command(f"tar -ztvf {file}")
-
 
 @main.command
 @click.option("-t", "--test-pypi", is_flag=True)
@@ -132,7 +135,7 @@ def publish(test_pypi=False, verbose=False):
         print(messages.ALLOW_PUBLISH)
         exit(1)
 
-    utils.build_project(clean=True, auto_bump=True)
+    build(clean=True, auto_bump=True)
 
     python = sys.executable
 
