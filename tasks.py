@@ -95,31 +95,22 @@ def release(c):
         version = get_version(c)
 
         if git_found:
-            # Fetch remote and ensure we're up to date
-            c.run("git fetch -q")
-            c.run("git rev-list --count @{u}..", hide=True)
+            c.run("git pull") 
 
         if 'dev' in version:
-            # Bump to stable version
             c.run("uv version --bump stable")
             version = get_version(c)
 
-        # Build Wheel
         c.run("uv build --wheel")
 
-        # Commit and push changes
         if git_found:
             c.run(f"git commit -am 'Release {version}'")
-            c.run("git push")
 
-        # Publish to PyPI
         c.run("uv publish")
 
-        # Bump to next dev version
         c.run("uv version --bump patch --bump dev=0")
         version = get_version(c)
 
-        # Commit new dev version
         if git_found:
             c.run(f"git commit -am 'Bump to version {version}'")
 
