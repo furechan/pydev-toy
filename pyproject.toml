@@ -11,7 +11,7 @@ name = "pydev-toy"
 version = "0.0.15.dev0"
 readme = "README.md"
 license = "MIT"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 keywords = ["pyproject", "cli"]
 description = "Command line util to manage python projects"
 urls.homepage = "https://github.com/furechan/pydev-toy"

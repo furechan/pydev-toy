@@ -1,6 +1,7 @@
 """Tasks template for uv based projects"""
 
 import json
+
 from pathlib import Path
 from urllib import request
 from urllib.error import HTTPError
@@ -8,8 +9,8 @@ from urllib.error import HTTPError
 from invoke import task
 
 ROOTDIR = Path(__file__).parent
-
 TEMPLATE_URL = "https://raw.githubusercontent.com/furechan/pydev-toy/main/tasks.py"
+
 
 
 def get_version(c) -> str:
