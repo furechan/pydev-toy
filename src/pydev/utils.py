@@ -54,8 +54,10 @@ def load_config() -> dict:
 
     pyproject = project_file().resolve(strict=True)
 
-    with open(pyproject, "rb") as f:
-        return tomlkit.load(f)
+    with open(pyproject, "r") as f:
+        data = tomlkit.load(f)
+
+    return data
 
 
 def save_config(data: dict):
@@ -63,7 +65,7 @@ def save_config(data: dict):
 
     pyproject = project_file().resolve(strict=True)
 
-    with open(pyproject, "rb") as f:
+    with open(pyproject, "w") as f:
         return tomlkit.dump(data, f)
 
 
@@ -72,6 +74,7 @@ def query_config(item: str):
     """Query pyproject.toml file"""
 
     data = load_config()
+
     for i in item.split("."):
         data = data.get(i, None)
         if data is None:
@@ -84,6 +87,10 @@ def update_config(item: str, value):
     """Query pyproject.toml file"""
 
     data = load_config()
+
+    if not data:
+        raise RuntimeError("Could not load pyproject.toml!")
+
     parts = item.split(".")
     key = parts.pop()
     leaf = data

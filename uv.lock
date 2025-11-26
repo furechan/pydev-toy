@@ -695,7 +695,7 @@ wheels = [
 
 [[package]]
 name = "pydev-toy"
-version = "0.0.15"
+version = "0.0.15.dev0"
 source = { editable = "." }
 dependencies = [
     { name = "build" },

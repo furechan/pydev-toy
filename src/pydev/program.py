@@ -106,21 +106,17 @@ def bump(dev=False):
     version = utils.bump_version(version)
     if dev:
         version = version + ".dev0"
+
     utils.update_config("project.version", version)
 
 
 
 @main.command
-@click.pass_context
-@click.option("-c", "--clean", is_flag=True)
-def build(ctx, clean=False):
+def build():
     """Build project wheel"""
 
     python = sys.executable
     root = utils.project_root(strict=True)
-
-    if clean:
-        ctx.invoke(clean)
 
     # pick target depending on setup config
     if root.joinpath("setup.py").exists():
@@ -165,15 +161,15 @@ def release(ctx, test_pypi=False, verbose=False):
     """Build and publish project to pypi"""
 
     version = utils.query_config("project.version")
+
     if "dev" in version:
         print("Current version is pre-release. Bumping to stable!")
         version = utils.stable_version(version)
         utils.update_config("project.version", version)
-        exit(1)
 
-    ctx.invoke(build, clean=True)
+    ctx.invoke(clean)
+    ctx.invoke(build)
 
-    ctx.invoke(publish, test_pypi=test_pypi, verbose=verbose)
 
 
 
