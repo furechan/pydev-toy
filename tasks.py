@@ -16,11 +16,11 @@ def get_version(c) -> str:
     return c.run("uv version --short", hide=True).stdout.strip()
 
 
-def parse_version(version: str):
+def parse_version(version: str) -> tuple:
     return tuple(int(part) if part.isdigit() else part for part in version.split("."))
 
 
-def pypi_releases(name):
+def pypi_releases(name: str) -> list[str]:
     """List of releases from pypi"""
     url = f"https://pypi.org/pypi/{name}/json"
     try:
@@ -33,7 +33,7 @@ def pypi_releases(name):
         return []
 
 
-def user_confirm(message, exit_otherwise=False):
+def user_confirm(message: str, *, exit_otherwise=False) -> bool:
     """Confirm user choice or exit (optionally)"""
     response = input(f"{message} (y/N): ")
     confirm = response.lower() in ('y', 'yes')
