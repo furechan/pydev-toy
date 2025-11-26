@@ -1,10 +1,9 @@
-"""pydev toy cli"""
+"""Basic python project management cli based on build and twine"""
 
 import sys
 import shutil
 import logging
 import tomlkit
-
 
 import click
 
@@ -14,6 +13,8 @@ from . import messages
 logger = logging.getLogger()
 
 
+TASKS_SOURCE_URL = "https://raw.githubusercontent.com/furechan/pydev-toy/main/tasks.py"
+
 
 @click.group(chain=True)
 def main():
@@ -21,11 +22,10 @@ def main():
 
 
 @main.command
-@click.pass_context
-def info(ctx):
+def info():
     """Project info including pypi versions"""
-    name = utils.get_config("project.name")
-    version = utils.get_config("project.version")
+    name = utils.query_config("project.name")
+    version = utils.query_config("project.version")
     location = utils.project_root()
     releases = utils.pypi_releases(name)
     print("name", name)
@@ -35,9 +35,26 @@ def info(ctx):
 
 
 @main.command
-@click.pass_context
-def clean(ctx):
-    """Delete build and dist folders"""
+def tasks():
+    """Inject tasks.py template into project"""
+
+    root = utils.project_root(strict=True)
+    tasks_py = root.joinpath("tasks.py")
+
+    if tasks_py.exists():
+        utils.user_confirm(
+            "tasks.py already exists! Overwrite?",
+            exit_otherwise=True
+        )
+
+    command = f"curl -fsSL {TASKS_SOURCE_URL} -o {tasks_py}"
+
+    utils.run_command(command)
+
+
+@main.command
+def clean():
+    """Deletes all dist files"""
     root = utils.project_root(strict=True)
     dist = root.joinpath("dist")
     for f in dist.glob("*.whl"):
@@ -47,20 +64,18 @@ def clean(ctx):
 
 
 @main.command
-@click.pass_context
 @click.option("-y", "--yes", is_flag=True)
-def prune(ctx, yes):
+def prune(yes):
     """Delete all runtime folders"""
     root = utils.project_root(strict=True)
     folders = "build", "dist", ".venv", ".nox", ".tox"
     folders = [f for f in folders if root.joinpath(f).exists()]
 
-    confirm = yes or utils.confirm_choice(
-        f"Do you want to delete runtime folders {folders}"
-    )
-
-    if not confirm:
-        exit(1)
+    if not yes:
+        utils.user_confirm(
+            f"Do you want to delete runtime folders {folders}",
+            exit_otherwise=True
+        )
 
     for folder in folders:
         path = root.joinpath(folder)
@@ -71,8 +86,7 @@ def prune(ctx, yes):
 
 
 @main.command
-@click.pass_context
-def dump(ctx):
+def dump():
     """Dump wheel and sdist contents"""
     root = utils.project_root(strict=True)
     dist = root.joinpath("dist")
@@ -85,15 +99,18 @@ def dump(ctx):
 
 
 @main.command
-@click.pass_context
-def bump(ctx):
+@click.option("-d", "--dev", is_flag=True)
+def bump(dev=False):
     """Bump patch version in pyproject"""
     root = utils.project_root(strict=True)
     pyproject = root.joinpath("pyproject.toml").resolve(strict=True)
-
     config = tomlkit.loads(pyproject.read_text())
     version = config["project"]["version"]
+
     version = utils.bump_version(version)
+    if dev:
+        version = version + ".dev0"
+
     config["project"]["version"] = str(version)
 
     print(f"Updating version to {version} ...")
@@ -102,15 +119,9 @@ def bump(ctx):
 
 
 @main.command
-@click.pass_context
 @click.option("-c", "--clean", is_flag=True)
-@click.option("-a", "--auto-bump", is_flag=True)
-def build(ctx, *, clean=False, auto_bump=False):
+def build(clean=False):
     """Build project wheel"""
-
-    # bump version if needed
-    if auto_bump and utils.already_released():
-        ctx.invoke(bump)
 
     python = sys.executable
     root = utils.project_root(strict=True)
@@ -136,13 +147,11 @@ def build(ctx, *, clean=False, auto_bump=False):
 @click.option("-t", "--test-pypi", is_flag=True)
 @click.option("-v", "--verbose", is_flag=True)
 def publish(ctx, test_pypi=False, verbose=False):
-    """Publish project with twine"""
+    """Publish project to pypi"""
 
-    if not utils.get_config("tool.pydev.allow-publish"):
+    if not utils.query_config("tool.pydev.allow-publish"):
         print(messages.ALLOW_PUBLISH)
         exit(1)
-
-    ctx.invoke(build, clean=True, auto_bump=True)
 
     python = sys.executable
 
@@ -155,3 +164,35 @@ def publish(ctx, test_pypi=False, verbose=False):
     command = f"{python} -mtwine upload {flags} dist/*"
 
     utils.run_command(command)
+
+
+
+@main.command
+@click.pass_context
+@click.option("-t", "--test-pypi", is_flag=True)
+@click.option("-v", "--verbose", is_flag=True)
+def release(ctx, test_pypi=False, verbose=False):
+    """Build and publish project to pypi"""
+
+    version = utils.query_config("project.version")
+    if "dev" in version:
+        print("Cannot release a dev version!")
+        exit(1)
+
+    if not utils.query_config("tool.pydev.allow-publish"):
+        print(messages.ALLOW_PUBLISH)
+        exit(1)
+
+    python = sys.executable
+
+    flags = ""
+    if test_pypi:
+        flags += " --repository testpypi"
+    if verbose:
+        flags += " --verbose"
+
+    command = f"{python} -mtwine upload {flags} dist/*"
+
+    utils.run_command(command)
+
+

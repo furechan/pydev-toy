@@ -1,38 +1,66 @@
-"""
-Tasks template for uv based projects
-Requires `invoke` and `packaging` modules!
-"""
+"""Tasks template for uv based projects"""
+
+import json
+from pathlib import Path
+from urllib import request
+from urllib.error import HTTPError
 
 from invoke import task
-from pathlib import Path
-from packaging.version import Version
-
-
-TEMPLATE_URL = "https://raw.githubusercontent.com/furechan/pydev-toy/main/tasks.py"
 
 ROOTDIR = Path(__file__).parent
 
+TEMPLATE_URL = "https://raw.githubusercontent.com/furechan/pydev-toy/main/tasks.py"
+
 
 def get_version(c) -> str:
-    return Version(c.run("uv version --short", hide=True).stdout.strip())
+    return c.run("uv version --short", hide=True).stdout.strip()
 
 
-def bump_version(version: str | Version) -> str:
-    """Bump patch version"""
-    if isinstance(version, str):
-        version = Version(version)
-    return f"{version.major}.{version.minor}.{version.micro + 1}"
+def parse_version(version: str):
+    return tuple(int(part) if part.isdigit() else part for part in version.split("."))
+
+
+def pypi_releases(name):
+    """List of releases from pypi"""
+    url = f"https://pypi.org/pypi/{name}/json"
+    try:
+        res = request.urlopen(url)
+        data = json.load(res)
+        releases = data.get("releases", [])
+        releases = sorted(releases, key=parse_version, reverse=True)
+        return releases
+    except HTTPError:
+        return []
+
+
+def user_confirm(message, exit_otherwise=False):
+    """Confirm user choice or exit (optionally)"""
+    response = input(f"{message} (y/N): ")
+    confirm = response.lower() in ('y', 'yes')
+    if exit_otherwise and not confirm:
+        exit(1)
+    return confirm
+
+
+@task
+def info(c):
+    """Project info including pypi releases"""
+    name, verion = c.run("uv version", hide=True).stdout.strip().split(" ")
+    releases = pypi_releases(name)
+    if len(releases) > 5:
+        releases = releases[:5] + ["..."] 
+    print("name:", name)
+    print("version:", verion)
+    print("releases:", *releases)
 
 
 @task
 def update(c, yes=False):
     """Update tasks.py from remote source"""
     if not yes:
-        response = input(f"Update tasks.py from {TEMPLATE_URL}? [y/N] ")
-        if response.lower() not in ('y', 'yes'):
-            print("Update cancelled.")
-            return    
+        user_confirm(f"Update tasks.py from {TEMPLATE_URL}?", exit_otherwise=True)
     c.run(f"curl -fsSL {TEMPLATE_URL} -o {__file__}")
+
 
 @task
 def clean(c):
@@ -57,35 +85,41 @@ def build(c):
 
 
 @task(clean)
-def publish(c):
+def release(c):
     """Build and publish package wheel"""
 
-    dotgit = ROOTDIR.joinpath(".git")
+    git_found = ROOTDIR.joinpath(".git").exists()
 
     with c.cd(ROOTDIR):
         version = get_version(c)
 
-        if dotgit.exists():
+        if git_found:
             # Fetch remote and ensure we're up to date
             c.run("git fetch -q")
-            c.run("git rev-list --count @{u}.. >/dev/null")
+            c.run("git rev-list --count @{u}..", hide=True)
 
-        if version.is_prerelease:
+        if 'dev' in version:
             # Bump to stable version
             c.run("uv version --bump stable")
             version = get_version(c)
 
+        # Build Wheel
         c.run("uv build --wheel")
 
-        if dotgit.exists():
+        # Commit and push changes
+        if git_found:
             c.run(f"git commit -am 'Release {version}'")
             c.run("git push")
- 
+
+        # Publish to PyPI
         c.run("uv publish")
-        c.run("uv version --bump patch --bump dev")
+
+        # Bump to next dev version
+        c.run("uv version --bump patch --bump dev=0")
         version = get_version(c)
 
-        if dotgit.exists():
+        # Commit new dev version
+        if git_found:
             c.run(f"git commit -am 'Bump to version {version}'")
 
 

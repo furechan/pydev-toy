@@ -2,7 +2,7 @@
 
 import os
 import json
-import tomli
+import tomlkit
 import subprocess
 
 from pathlib import Path
@@ -29,7 +29,7 @@ def project_root(strict=False):
         raise FileNotFoundError("pyproject.toml")
 
 
-def run_command(command, *, cwd=None, echo=True, strict=False):
+def run_command(command, *, cwd=None, echo=True, raise_on_error=False):
     """Run shell command"""
 
     if echo:
@@ -37,12 +37,10 @@ def run_command(command, *, cwd=None, echo=True, strict=False):
 
     rc = subprocess.run(command, cwd=cwd, shell=True)
 
-    if strict and rc != 0:
+    if raise_on_error and rc != 0:
         raise RuntimeError("Command failed!")
 
 
-
-@lru_cache
 def load_config():
     """Load pyproject.toml file"""
 
@@ -50,20 +48,48 @@ def load_config():
     pyproject = root.joinpath("pyproject.toml").resolve(strict=True)
 
     with open(pyproject, "rb") as f:
-        return tomli.load(f)
+        return tomlkit.load(f)
 
 
-def get_config(item: str):
+def save_config(data):
+    """Save pyproject.toml file"""
+
+    root = project_root(strict=True)
+    pyproject = root.joinpath("pyproject.toml").resolve(strict=True)
+
+    with open(pyproject, "rb") as f:
+        return tomlkit.dump(data, f)
+
+
+
+def query_config(item: str):
     """Query pyproject.toml file"""
 
     data = load_config()
-
     for i in item.split("."):
         data = data.get(i, None)
         if data is None:
             break
 
     return data
+
+
+def update_config(item: str, value):
+    """Query pyproject.toml file"""
+
+    data = load_config()
+    parts = item.split(".")
+    key = parts.pop()
+    leaf = data
+
+    for i in parts:
+        leaf = leaf.get(i, None)
+        if leaf is None:
+            raise KeyError(f"Item {i} not found!")
+
+    leaf[key] = value
+    save_config(data)
+
 
 
 def search_path(pattern: str, path=None):
@@ -82,11 +108,13 @@ def search_path(pattern: str, path=None):
         yield from p.glob(pattern)
 
 
-def confirm_choice(message):
+def user_confirm(message, *, exit_otherwise=False):
     prompt = f"{message} (yes/no):"
     response = input(prompt)
-    return response.lower() in ("y", "yes")
-   
+    confirm = response.lower() in ("y", "yes")
+    if exit_otherwise and not confirm:
+        exit(1)
+    return confirm
 
 
 def pypi_releases(name):
@@ -101,6 +129,16 @@ def pypi_releases(name):
         return []
 
 
+
+
+def stable_version(version):
+    """Bump to stable version"""
+    if isinstance(version, str):
+        version = Version(version)
+    return f"{version.major}.{version.minor}.{version.micro}"
+
+
+
 def bump_version(version):
     """Bump patch version"""
     if isinstance(version, str):
@@ -109,8 +147,8 @@ def bump_version(version):
 
 
 def already_released():
-    name = get_config("project.name")
-    version = get_config("project.version")
+    name = query_config("project.name")
+    version = query_config("project.version")
     releases = pypi_releases(name)
     return version in releases
 

@@ -25,7 +25,7 @@ Commands:
   bump     Bump static version in pyproject.toml
   clean    Delete build and dist folders
   dump     Dump wheel and sdist contents
-  info     Project info including pypi versions
+  info     Project info including pypi releases
   prune    Delete all runtime folders
   publish  Publish project with twine
 ```
