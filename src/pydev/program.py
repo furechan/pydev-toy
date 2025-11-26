@@ -165,16 +165,16 @@ def release(ctx, test_pypi=False, verbose=False):
     git_found = root.joinpath(".git").exists()
 
     if git_found:
-        # Fetch remote and ensure we're up to date
-        utils.run_command("git pull", cwd=root)
+        utils.run_command("git pull", cwd=root, check=True)
 
     version = utils.query_config("project.version")
 
     if "dev" in version:
         print("Current version is pre-release. Bumping to stable!")
         version = utils.stable_version(version)
+        message = f"Bump to stable version {version}"
         utils.update_config("project.version", version)
-        utils.run_command(f"git commit -am 'Bump to stable version {version}'", cwd=root)
+        utils.run_command(f"git commit -am '{message}'", cwd=root)
 
     ctx.invoke(clean)
     ctx.invoke(build)
@@ -182,6 +182,7 @@ def release(ctx, test_pypi=False, verbose=False):
 
     version = utils.bump_version(version) + ".dev0"
     utils.update_config("project.version", version)
-    utils.run_command(f"git commit -am 'Bump to dev version {version}'", cwd=root)
+    message = f"Bump to dev version {version}"
+    utils.run_command(f"git commit -am '{message}'", cwd=root)
 
 
