@@ -1,9 +1,8 @@
-"""Basic python project management cli based on build and twine"""
+"""Basic python project release helper"""
 
 import sys
 import shutil
 import logging
-import tomlkit
 
 import click
 
@@ -23,15 +22,15 @@ def main():
 
 @main.command
 def info():
-    """Project info including pypi versions"""
+    """Project info including pypi releases"""
     name = utils.query_config("project.name")
     version = utils.query_config("project.version")
-    location = utils.project_root()
     releases = utils.pypi_releases(name)
-    print("name", name)
-    print("version", version)
-    print("location", location)
-    print("pypi.releases", releases)
+    if len(releases) > 5:
+        releases = releases[:5] + ["..."]
+    print("name:", name)
+    print("version:", version)
+    print("releases", *releases)
 
 
 @main.command
@@ -101,36 +100,27 @@ def dump():
 @main.command
 @click.option("-d", "--dev", is_flag=True)
 def bump(dev=False):
-    """Bump patch version in pyproject"""
-    root = utils.project_root(strict=True)
-    pyproject = root.joinpath("pyproject.toml").resolve(strict=True)
-    config = tomlkit.loads(pyproject.read_text())
-    version = config["project"]["version"]
+    """Bump version in pyproject"""
 
+    version = utils.query_config("project.version")
     version = utils.bump_version(version)
     if dev:
         version = version + ".dev0"
-
-    config["project"]["version"] = str(version)
-
-    print(f"Updating version to {version} ...")
-    pyproject.write_text(tomlkit.dumps(config))
+    utils.update_config("project.version", version)
 
 
 
 @main.command
+@click.pass_context
 @click.option("-c", "--clean", is_flag=True)
-def build(clean=False):
+def build(ctx, clean=False):
     """Build project wheel"""
 
     python = sys.executable
     root = utils.project_root(strict=True)
-    dist = root.joinpath("dist")
 
-    # clean dist folder if present
-    if clean and dist.is_dir():
-        print(f"rmtree {dist}")
-        shutil.rmtree(dist)
+    if clean:
+        ctx.invoke(clean)
 
     # pick target depending on setup config
     if root.joinpath("setup.py").exists():
@@ -176,23 +166,14 @@ def release(ctx, test_pypi=False, verbose=False):
 
     version = utils.query_config("project.version")
     if "dev" in version:
-        print("Cannot release a dev version!")
+        print("Current version is pre-release. Bumping to stable!")
+        version = utils.stable_version(version)
+        utils.update_config("project.version", version)
         exit(1)
 
-    if not utils.query_config("tool.pydev.allow-publish"):
-        print(messages.ALLOW_PUBLISH)
-        exit(1)
+    ctx.invoke(build, clean=True)
 
-    python = sys.executable
+    ctx.invoke(publish, test_pypi=test_pypi, verbose=verbose)
 
-    flags = ""
-    if test_pypi:
-        flags += " --repository testpypi"
-    if verbose:
-        flags += " --verbose"
-
-    command = f"{python} -mtwine upload {flags} dist/*"
-
-    utils.run_command(command)
 
 

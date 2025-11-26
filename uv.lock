@@ -700,7 +700,6 @@ source = { editable = "." }
 dependencies = [
     { name = "build" },
     { name = "click" },
-    { name = "jmespath" },
     { name = "packaging" },
     { name = "tomlkit" },
     { name = "twine" },
@@ -710,7 +709,7 @@ dependencies = [
 dev = [
     { name = "invoke" },
     { name = "ipykernel" },
-    { name = "packaging" },
+    { name = "jmespath" },
     { name = "pytest" },
 ]
 
@@ -718,7 +717,6 @@ dev = [
 requires-dist = [
     { name = "build" },
     { name = "click" },
-    { name = "jmespath" },
     { name = "packaging" },
     { name = "tomlkit" },
     { name = "twine" },
@@ -728,7 +726,7 @@ requires-dist = [
 dev = [
     { name = "invoke" },
     { name = "ipykernel" },
-    { name = "packaging" },
+    { name = "jmespath" },
     { name = "pytest" },
 ]
 

@@ -18,7 +18,6 @@ urls.homepage = "https://github.com/furechan/pydev-toy"
 dependencies = [
     "click",
     "tomlkit",
-    "jmespath",
     "packaging",
     "build",
     "twine",
@@ -36,7 +35,7 @@ dev = [
     "pytest",
     "ipykernel",
     "invoke",
-    "packaging",
+    "jmespath",
 ]
 
 

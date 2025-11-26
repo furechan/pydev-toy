@@ -9,10 +9,24 @@ from pathlib import Path
 
 from functools import lru_cache
 
-from packaging.version import Version
-
 from urllib import request
 from urllib.error import HTTPError
+
+from packaging.version import Version
+
+
+
+def run_command(command, *, cwd=None, echo=True, raise_on_error=False):
+    """Run shell command"""
+
+    if echo:
+        print(command)
+
+    rc = subprocess.run(command, cwd=cwd, shell=True)
+
+    if raise_on_error and rc != 0:
+        raise RuntimeError("Command failed!")
+
 
 
 @lru_cache
@@ -29,23 +43,17 @@ def project_root(strict=False):
         raise FileNotFoundError("pyproject.toml")
 
 
-def run_command(command, *, cwd=None, echo=True, raise_on_error=False):
-    """Run shell command"""
+def project_file(name: str = "pyproject.toml"):
+    """Get project file path"""
 
-    if echo:
-        print(command)
-
-    rc = subprocess.run(command, cwd=cwd, shell=True)
-
-    if raise_on_error and rc != 0:
-        raise RuntimeError("Command failed!")
+    root = project_root(strict=True)
+    return root.joinpath(name)
 
 
 def load_config():
     """Load pyproject.toml file"""
 
-    root = project_root(strict=True)
-    pyproject = root.joinpath("pyproject.toml").resolve(strict=True)
+    pyproject = project_file().resolve(strict=True)
 
     with open(pyproject, "rb") as f:
         return tomlkit.load(f)
@@ -54,8 +62,7 @@ def load_config():
 def save_config(data):
     """Save pyproject.toml file"""
 
-    root = project_root(strict=True)
-    pyproject = root.joinpath("pyproject.toml").resolve(strict=True)
+    pyproject = project_file().resolve(strict=True)
 
     with open(pyproject, "rb") as f:
         return tomlkit.dump(data, f)
@@ -127,7 +134,6 @@ def pypi_releases(name):
         return sorted(releases, key=Version, reverse=True)
     except HTTPError:
         return []
-
 
 
 
