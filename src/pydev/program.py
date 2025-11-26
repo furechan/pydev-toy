@@ -3,6 +3,7 @@
 import sys
 import shutil
 import logging
+import contextlib
 
 import click
 
@@ -160,16 +161,27 @@ def publish(ctx, test_pypi=False, verbose=False):
 def release(ctx, test_pypi=False, verbose=False):
     """Build and publish project to pypi"""
 
+    root = utils.project_root(strict=True)
+    git_found = root.joinpath(".git").exists()
+
+    if git_found:
+        # Fetch remote and ensure we're up to date
+        utils.run_command("git pull", cwd=root)
+
     version = utils.query_config("project.version")
 
     if "dev" in version:
         print("Current version is pre-release. Bumping to stable!")
         version = utils.stable_version(version)
         utils.update_config("project.version", version)
+        utils.run_command(f"git commit -am 'Bump to stable version {version}'", cwd=root)
 
     ctx.invoke(clean)
     ctx.invoke(build)
+    ctx.invoke(publish, test_pypi=test_pypi, verbose=verbose)
 
-
+    version = utils.bump_version(version) + ".dev0"
+    utils.update_config("project.version", version)
+    utils.run_command(f"git commit -am 'Bump to dev version {version}'", cwd=root)
 
 
