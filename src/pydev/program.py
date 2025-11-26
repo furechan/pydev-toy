@@ -172,8 +172,10 @@ def release(ctx, test_pypi=False, verbose=False):
     if "dev" in version:
         print("Current version is pre-release. Bumping to stable!")
         version = utils.stable_version(version)
-        message = f"Bump to stable version {version}"
         utils.update_config("project.version", version)
+
+    if git_found:
+        message = f"Release version {version}"
         utils.run_command(f"git commit -am '{message}'", cwd=root)
 
     ctx.invoke(clean)
@@ -182,7 +184,9 @@ def release(ctx, test_pypi=False, verbose=False):
 
     version = utils.bump_version(version) + ".dev0"
     utils.update_config("project.version", version)
-    message = f"Bump to dev version {version}"
-    utils.run_command(f"git commit -am '{message}'", cwd=root)
+
+    if git_found:
+        message = f"Bump to dev version {version}"
+        utils.run_command(f"git commit -am '{message}'", cwd=root)
 
 
