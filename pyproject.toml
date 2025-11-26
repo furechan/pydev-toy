@@ -15,16 +15,16 @@ requires-python = ">=3.10"
 keywords = ["pyproject", "cli"]
 description = "Command line util to manage python projects"
 urls.homepage = "https://github.com/furechan/pydev-toy"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
 dependencies = [
     "click",
     "tomlkit",
     "packaging",
     "build",
     "twine",
-]
-classifiers = [
-    "Programming Language :: Python :: 3",
-    "Operating System :: OS Independent",
 ]
 
 [project.scripts]

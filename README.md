@@ -1,33 +1,32 @@
-# Command line util to manage python projects 
+# Command line helper to manage modern python projects 
 
-Command line utility to manage standard `pyproject.toml` based projects.
+Command line helper to manage standard `pyproject.toml` based projects.
 The interface is built with `click` and can run multiple commands in sequence.
 
-```console
+```shell
 pydev clean build dump
 ```
 
 This project is exploratory and may be usefull as a basis for custom workflows.
-The library uses standard python packaging tools like `build` and `twine`
-and works independently from the build backend.
-
 
 ## Usage
 
 ```console
-Usage: python -m pydev [OPTIONS] COMMAND1 [ARGS]... [COMMAND2 [ARGS]...]...
+Usage: pydev [OPTIONS] COMMAND1 [ARGS]... [COMMAND2 [ARGS]...]...
 
 Options:
   --help  Show this message and exit.
 
 Commands:
   build    Build project wheel
-  bump     Bump static version in pyproject.toml
-  clean    Delete build and dist folders
+  bump     Bump version in pyproject
+  clean    Deletes all dist files
   dump     Dump wheel and sdist contents
   info     Project info including pypi releases
   prune    Delete all runtime folders
-  publish  Publish project with twine
+  publish  Publish project to pypi
+  release  Build and publish project to pypi
+  tasks    Inject tasks.py template into project
 ```
 
 
@@ -35,7 +34,7 @@ Commands:
 
 The `pydev` tool is best installed as a script in a separate ennvironment using `pipx` or `uv tool`.
 
-```console
+```shell
 pipx install pydev-toy
 ```
 

@@ -16,21 +16,20 @@ from packaging.version import Version
 
 
 
-def run_command(command, *, cwd=None, echo=True, raise_on_error=False):
+def run_command(command: str, *, cwd=None, check=False, echo=True) -> int:
     """Run shell command"""
 
     if echo:
         print(command)
 
-    rc = subprocess.run(command, cwd=cwd, shell=True)
+    res = subprocess.run(command, cwd=cwd, shell=True, check=check)
 
-    if raise_on_error and rc != 0:
-        raise RuntimeError("Command failed!")
+    return res.returncode
 
 
 
 @lru_cache
-def project_root(strict=False):
+def project_root(strict: bool = False) -> Path:
     """Walk up to find pyproject.toml"""
 
     cwd = Path.cwd()
@@ -43,14 +42,14 @@ def project_root(strict=False):
         raise FileNotFoundError("pyproject.toml")
 
 
-def project_file(name: str = "pyproject.toml"):
+def project_file(name: str = "pyproject.toml") -> Path:
     """Get project file path"""
 
     root = project_root(strict=True)
     return root.joinpath(name)
 
 
-def load_config():
+def load_config() -> dict:
     """Load pyproject.toml file"""
 
     pyproject = project_file().resolve(strict=True)
@@ -59,7 +58,7 @@ def load_config():
         return tomlkit.load(f)
 
 
-def save_config(data):
+def save_config(data: dict):
     """Save pyproject.toml file"""
 
     pyproject = project_file().resolve(strict=True)
@@ -115,7 +114,7 @@ def search_path(pattern: str, path=None):
         yield from p.glob(pattern)
 
 
-def user_confirm(message, *, exit_otherwise=False):
+def user_confirm(message: str, *, exit_otherwise=False) -> bool:
     prompt = f"{message} (yes/no):"
     response = input(prompt)
     confirm = response.lower() in ("y", "yes")
@@ -124,7 +123,7 @@ def user_confirm(message, *, exit_otherwise=False):
     return confirm
 
 
-def pypi_releases(name):
+def pypi_releases(name: str) -> list[str]:
     """List of version on pypi"""
     url = f"https://pypi.org/pypi/{name}/json"
     try:
@@ -137,7 +136,7 @@ def pypi_releases(name):
 
 
 
-def stable_version(version):
+def stable_version(version) -> str:
     """Bump to stable version"""
     if isinstance(version, str):
         version = Version(version)
@@ -145,14 +144,14 @@ def stable_version(version):
 
 
 
-def bump_version(version):
+def bump_version(version) -> str:
     """Bump patch version"""
     if isinstance(version, str):
         version = Version(version)
     return f"{version.major}.{version.minor}.{version.micro + 1}"
 
 
-def already_released():
+def already_released() -> bool:
     name = query_config("project.name")
     version = query_config("project.version")
     releases = pypi_releases(name)
