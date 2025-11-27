@@ -11,9 +11,8 @@ buffer = readme.read_text()
 
 output = subprocess.check_output("python -mpydev --help", shell=True, encoding="utf-8")
 
-replace = f"```console\n{output}```"
-
 pattern = """```console\nUsage:(.*?)```"""
+replace = f"```console\n{output}```"
 
 buffer, count = re.subn(pattern, replace, buffer, flags=re.DOTALL)
 

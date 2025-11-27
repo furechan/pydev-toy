@@ -12,7 +12,7 @@ This project is exploratory and may be usefull as a basis for custom workflows.
 ## Usage
 
 ```console
-Usage: pydev [OPTIONS] COMMAND1 [ARGS]... [COMMAND2 [ARGS]...]...
+Usage: python -m pydev [OPTIONS] COMMAND1 [ARGS]... [COMMAND2 [ARGS]...]...
 
 Options:
   --help  Show this message and exit.

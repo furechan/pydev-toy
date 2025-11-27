@@ -3,7 +3,6 @@
 import sys
 import shutil
 import logging
-import contextlib
 
 import click
 
@@ -131,8 +130,8 @@ def build():
 
 @main.command
 @click.pass_context
-@click.option("-t", "--test-pypi", is_flag=True)
 @click.option("-v", "--verbose", is_flag=True)
+@click.option("-t", "--test-pypi", is_flag=True)
 def publish(ctx, test_pypi=False, verbose=False):
     """Publish project to pypi"""
 
@@ -156,7 +155,6 @@ def publish(ctx, test_pypi=False, verbose=False):
 
 @main.command
 @click.pass_context
-@click.option("-t", "--test-pypi", is_flag=True)
 @click.option("-v", "--verbose", is_flag=True)
 def release(ctx, test_pypi=False, verbose=False):
     """Build and publish project to pypi"""
@@ -180,7 +178,7 @@ def release(ctx, test_pypi=False, verbose=False):
 
     ctx.invoke(clean)
     ctx.invoke(build)
-    ctx.invoke(publish, test_pypi=test_pypi, verbose=verbose)
+    ctx.invoke(publish, verbose=verbose)
 
     version = utils.bump_version(version) + ".dev0"
     utils.update_config("project.version", version)
