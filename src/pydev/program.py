@@ -173,7 +173,7 @@ def release(ctx, test_pypi=False, verbose=False):
         utils.update_config("project.version", version)
 
     if git_found:
-        message = f"Release version {version}"
+        message = f"Release {version}"
         utils.run_command(f"git commit -am '{message}'", cwd=root)
 
     ctx.invoke(clean)
