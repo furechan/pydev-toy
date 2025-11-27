@@ -7,13 +7,12 @@ import subprocess
 
 from pathlib import Path
 
-from functools import lru_cache
-
 from urllib import request
 from urllib.error import HTTPError
 
 from packaging.version import Version
 
+from functools import lru_cache
 
 
 def run_command(command: str, *, cwd=None, check=False, echo=True) -> int:
@@ -148,7 +147,6 @@ def stable_version(version) -> str:
     if isinstance(version, str):
         version = Version(version)
     return f"{version.major}.{version.minor}.{version.micro}"
-
 
 
 def bump_version(version) -> str:
